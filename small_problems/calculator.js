@@ -21,7 +21,7 @@ prompt('Welcome to the Calculator!');
 prompt('What is the first number?');
 let firstNumber = readline.question();
 
-// ask user for a valid number if one wasn't originally provided
+// keep asking user for a valid number until one is provided
 while(invalidNumber(firstNumber)) {
   prompt("Hmm... That doesn't look like a valid number.")
   firstNumber = readline.question();
@@ -30,7 +30,7 @@ while(invalidNumber(firstNumber)) {
 prompt('What is the second number?');
 let secondNumber = readline.question();
 
-// ask user for a valid number if one wasn't originally provided
+// keep asking user for a valid number until one is provided
 while(invalidNumber(secondNumber)) {
   prompt("Hmm... That doesn't look like a valid number.")
   secondNumber = readline.question();
@@ -39,7 +39,7 @@ while(invalidNumber(secondNumber)) {
 prompt('What operation would you like to perform? \n1) Add 2) Subtract 3) Multiply 4) Divide');
 let operation = readline.question();
 
-// check for a proper operator and ask again if none was provided
+// check for a proper operator and keep asking until one is provided
 while(!['1', '2', '3', '4'].includes(operation)) {
   prompt("You must choose 1.. 2.. 3.. 4..")
   operation = readline.question();
