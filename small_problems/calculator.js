@@ -15,45 +15,56 @@
 
 
 const readline = require('readline-sync');
+const MESSAGES = require('./calculator_messages.json');
+const LANGUAGE = 'en';
 
-// make the program more readable
-function prompt(msg) {
-  console.log(`=> ${msg}`)
+function messages(message, lang='en') {
+  return MESSAGES[lang][message];
 }
+
+function prompt(key, result) {
+  let message = messages(key, LANGUAGE);
+  if (result) {
+    console.log(`=> ${message} ${result}`);
+  } else {
+    console.log(`=> ${message}`);
+  }
+}
+
+prompt('welcome');
+prompt('langaugeSetting')
 
 // check for whitespaces and valid numbers
 function invalidNumber(num) {
   return num.trimStart() === '' || Number.isNaN(Number(num));
 }
 
-prompt('Welcome to the Calculator!');
-
 while (true) {
 
-  prompt('What is the first number?');
+  prompt('firstNumberMsg');
   let firstNumber = readline.question();
   
   // keep asking user for a valid number until one is provided
   while(invalidNumber(firstNumber)) {
-    prompt("Hmm... That doesn't look like a valid number.")
+    prompt(MESSAGES.invalidNumber)
     firstNumber = readline.question();
   }
   
-  prompt('What is the second number?');
+  prompt('secondNumberMsg');
   let secondNumber = readline.question();
   
   // keep asking user for a valid number until one is provided
   while(invalidNumber(secondNumber)) {
-    prompt("Hmm... That doesn't look like a valid number.")
+    prompt('invalidNumber')
     secondNumber = readline.question();
   }
   
-  prompt('What operation would you like to perform? \n1) Add 2) Subtract 3) Multiply 4) Divide');
+  prompt('operation');
   let operation = readline.question();
   
   // check for a proper operator and keep asking until one is provided
   while(!['1', '2', '3', '4'].includes(operation)) {
-    prompt("You must choose 1.. 2.. 3.. 4..")
+    prompt('invalidOperation')
     operation = readline.question();
   }
   
@@ -74,9 +85,9 @@ while (true) {
       break;
   }
 
-  prompt(`The result is ${output}`);
+  prompt('result', output);
 
-  prompt(`Would you like to perform another calculation? yes/no`);
+  prompt('anotherOne');
   let anotherCalculation = readline.question();
 
   if (anotherCalculation.toLowerCase() !== 'yes') break;

@@ -1,0 +1,42 @@
+{ "languageSetting" : "Please type the language: \n'en' English, 'es' Spanish, 'fr' French, 'ger' German",
+  "en" : {
+    "welcome" : "Welcome to the Calculator!",
+    "firstNumberMsg" : "What is the first number?",
+    "secondNumberMsg" : "What is the second number?",
+    "invalidNumber" : "Hmm... That doesn't look like a valid number.",
+    "operation" : "What operation would you like to perform? \n1) Add 2) Subtract 3) Multiply 4) Divide",
+    "invalidOperation" : "You must choose 1.. 2.. 3.. 4..",
+    "result" : "The result is",
+    "anotherOne" : "Would you like to perform another calculation? yes/no"
+  },
+  "es" : {
+    "welcome" : "¡Bienvenido a la Calculadora!",
+    "firstNumberMsg" : "¿Cuál es el primer número?",
+    "secondNumberMsg" : "¿Cuál es el segundo número?",
+    "invalidNumber" : "Hmm... Eso no parece un número válido.",
+    "operation" : "¿Qué operación le gustaría realizar? \n1) Sumar 2) Restar 3) Multiplicar 4) Dividir",
+    "invalidOperation" : "Debes elegir 1.. 2.. 3.. 4..",
+    "result" : "The result is ",
+    "anotherOne" : "¿Te gustaría realizar otro cálculo? Sí/no"
+  },
+  "fr" : {
+    "welcome" : "Bienvenue à la calculatrice!",
+    "firstNumberMsg" : "Quel est le premier chiffre?",
+    "secondNumberMsg" : "Quel est le deuxième chiffre?",
+    "invalidNumber" : "Hmm... Cela ne ressemble pas à un nombre valide.",
+    "operation" : "Quelle opération souhaitez-vous effectuer? \n1) Ajouter 2) Soustraire 3) Multiplier 4) Diviser",
+    "invalidOperation" : "Vous devez choisir 1.. 2.. 3.. 4..",
+    "result" : "The result is ",
+    "anotherOne" : "Souhaitez-vous effectuer un autre calcul? oui/non"
+  },
+  "ger" : {
+    "welcome" : "Willkommen beim Rechner!",
+    "firstNumberMsg" : "Was ist die erste Zahl?",
+    "secondNumberMsg" : "Was ist die zweite Zahl?",
+    "invalidNumber" : "Hmm... Das sieht nicht nach einer gültigen Zahl aus.",
+    "operation" : "Welche Operation möchten Sie durchführen? \n1) Addieren 2) Subtrahieren 3) Multiplizieren 4) Dividieren",
+    "invalidOperation" : "Sie müssen 1.. 2.. 3.. 4..",
+    "result" : "The result is ",
+    "anotherOne" : "Möchten Sie eine weitere Berechnung durchführen? ja/nein"
+  }
+}
