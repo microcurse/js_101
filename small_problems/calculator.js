@@ -32,7 +32,6 @@ function prompt(key, result) {
 }
 
 prompt('welcome');
-prompt('langaugeSetting')
 
 // check for whitespaces and valid numbers
 function invalidNumber(num) {
@@ -46,7 +45,7 @@ while (true) {
   
   // keep asking user for a valid number until one is provided
   while(invalidNumber(firstNumber)) {
-    prompt(MESSAGES.invalidNumber)
+    prompt('invalidNumber')
     firstNumber = readline.question();
   }
   
