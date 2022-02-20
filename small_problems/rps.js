@@ -17,7 +17,6 @@
  */
 
 const readline = require('readline-sync');
-// const VALID_CHOICES = ['rock', 'paper', 'scissors', 'lizard', 'spock']
 const VALID_CHOICES = {
   r: 'rock', 
   p: 'paper', 
@@ -25,8 +24,16 @@ const VALID_CHOICES = {
   l: 'lizard', 
   v: 'spock'
 }
+const WIN_CONDITIONS = {
+  rock:     ['scissors', 'lizard'],
+  scissors: ['lizard', 'paper'],
+  paper:    ['rock', 'spock'],
+  lizard:   ['paper', 'spock'],
+  spock:    ['scissors', 'rock']
+}
 const CHOICE_KEYS = Object.keys(VALID_CHOICES);
 const CHOICE_VALUES = Object.values(VALID_CHOICES);
+
 let playerScore = 0;
 let computerScore = 0;
 let keepPlaying = true;
@@ -35,46 +42,31 @@ function prompt(msg) {
   console.log(`=> ${msg}`);
 }
 
-/**
- * possible player choices
- * rock
- * scissors
- * paper
- * lizard
- * spock
- * 
- * possible computer choices
- * 
- * scissors || lizard
- * lizard || paper
- * rock || spock
- * paper || spock
- * scissors || rock
- * 
- */
+function isShortened(choice) {
+  if (choice.length === 1) {
+    return VALID_CHOICES[choice];
+  }
+  return choice;
+}
+
+function playerWins(choice, computerChoice) {
+  return WIN_CONDITIONS[isShortened(choice)].includes(computerChoice);
+}
+
 function displayMatchWinner(choice, computerChoice) {
-  prompt(`You chose ${choice}. Computer chose ${computerChoice}`);
+  prompt(`You chose ${isShortened(choice)}. Computer chose ${computerChoice}`);
   
-  if (((choice === 'rock' || choice === 'r') && (computerChoice === 'scissors' || computerChoice === 'lizard')) || 
-      ((choice === 'scissors' || choice === 's') && (computerChoice === 'lizard' || computerChoice === 'paper')) || 
-      ((choice === 'paper' || choice === 'p') && (computerChoice === 'rock' || computerChoice === 'spock')) || 
-      ((choice === 'lizard' || choice === 'l') && (computerChoice === 'paper' || computerChoice === 'spock')) ||
-      ((choice === 'spock' || choice === 'v') && (computerChoice === 'scissors' || computerChoice === 'rock'))) {
+  if (playerWins(choice, computerChoice)) {
     prompt(`You won the match!`);
     addScore('player');
-  } else if (((choice === 'paper' || choice === 'p') && (computerChoice === 'scissors' || computerChoice === 'lizard')) || 
-      ((choice === 'rock' || choice === 'r') && (computerChoice === 'paper' || computerChoice === 'spock')) || 
-      ((choice === 'scissors' || choice === 's') && (computerChoice === 'rock' || computerChoice === 'spock')) || 
-      ((choice === 'spock' || choice === 'v') && (computerChoice === 'lizard' || computerChoice === 'paper')) ||
-      ((choice === 'lizard' || choice === 'l') && (computerChoice === 'scissors' || computerChoice === 'rock'))) {
+  } else if (isShortened(choice) === computerChoice) {
+    prompt("It's a tie!");
+  } else {
     prompt('Computer won the match!');
     addScore('computer');
-  } else {
-    prompt("It's a tie!");
   }
 }
 
-// add function for keeping score
 function addScore(matchWinner) {
   if (matchWinner === 'player') {
     playerScore += 1;
@@ -83,12 +75,10 @@ function addScore(matchWinner) {
   }
 }
 
-// add function for displaying score
 function displayScore() {
   prompt(`Player Score: ${playerScore}\n Computer Score: ${computerScore}`);
 }
 
-// check who won the game
 function chooseGameWinner(playerScore, computerScore) {
   if (playerScore === 3) {
     prompt(`You won the game!`);
@@ -105,7 +95,26 @@ function clearScore() {
   console.clear();
 }
 
+function askToPlayAgain() {
+  prompt("Would you like to play again? (y/n)");
+  let answer = readline.question().toLowerCase();
+  while (answer[0] !== 'y' && answer[0] !== 'n') {
+    prompt("Please enter 'y' or 'n'");
+    answer = readline.question().toLowerCase();
+  }
+
+  if (answer[0] === 'y') {
+    keepPlaying = true;
+    clearScore();
+    playGame();
+  } else {
+    prompt(`Thanks for playing! Goodbye!`)
+  }
+}
+
 function playGame() {
+  console.clear();
+
   while (keepPlaying) {
     prompt(`Choose one: ${CHOICE_VALUES.join(', ')} (${CHOICE_KEYS.join(', ')} respectively.)`);
     let choice = readline.question();
@@ -125,24 +134,6 @@ function playGame() {
     if (!keepPlaying) {
       askToPlayAgain();
     }
-  }
-}
-
-
-function askToPlayAgain() {
-  prompt("Would you like to play again? (y/n)");
-  let answer = readline.question().toLowerCase();
-  while (answer[0] !== 'y' && answer[0] !== 'n') {
-    prompt("Please enter 'y' or 'n'");
-    answer = readline.question().toLowerCase();
-  }
-
-  if (answer[0] === 'y') {
-    keepPlaying = true;
-    clearScore();
-    playGame();
-  } else {
-    prompt(`Thanks for playing! Goodbye!`)
   }
 }
 
