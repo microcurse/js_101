@@ -18,10 +18,10 @@
 
 const readline = require('readline-sync');
 const VALID_CHOICES = {
-  r: 'rock', 
-  p: 'paper', 
-  s: 'scissors', 
-  l: 'lizard', 
+  r: 'rock',
+  p: 'paper',
+  s: 'scissors',
+  l: 'lizard',
   v: 'spock'
 }
 const WIN_CONDITIONS = {
@@ -33,13 +33,36 @@ const WIN_CONDITIONS = {
 }
 const CHOICE_KEYS = Object.keys(VALID_CHOICES);
 const CHOICE_VALUES = Object.values(VALID_CHOICES);
+const WINNING_SCORE = 3;
 
+let choice = '';
+let computerChoice = '';
 let playerScore = 0;
 let computerScore = 0;
 let keepPlaying = true;
 
 function prompt(msg) {
   console.log(`=> ${msg}`);
+}
+
+function welcomeAndRules() {
+  prompt(`Welcome to Rock, Paper, Scissor, Lizard, Spock!`);
+  prompt(`This game is best of 5. So the first one to win 3 matches, wins the game!`);
+}
+
+function playersTurn() {
+  prompt(`Choose one: ${CHOICE_VALUES.join(', ')} (${CHOICE_KEYS.join(', ')} respectively.)`);
+  choice = readline.question().toLowerCase();
+  
+  while(!CHOICE_VALUES.includes(choice) && !CHOICE_KEYS.includes(choice)) {
+    prompt("That's not a valid choice.");
+    choice = readline.question().toLowerCase();
+  }
+}
+
+function computersTurn() {
+  let randomIndex = Math.floor(Math.random() * CHOICE_VALUES.length);
+  computerChoice = CHOICE_VALUES[randomIndex];
 }
 
 function isShortened(choice) {
@@ -80,10 +103,10 @@ function displayScore() {
 }
 
 function chooseGameWinner(playerScore, computerScore) {
-  if (playerScore === 3) {
+  if (playerScore === WINNING_SCORE) {
     prompt(`You won the game!`);
     keepPlaying = false;
-  } else if (computerScore === 3) {
+  } else if (computerScore === WINNING_SCORE) {
     prompt(`Computer won the game!`);
     keepPlaying = false;
   }
@@ -98,35 +121,27 @@ function clearScore() {
 function askToPlayAgain() {
   prompt("Would you like to play again? (y/n)");
   let answer = readline.question().toLowerCase();
-  while (answer[0] !== 'y' && answer[0] !== 'n') {
-    prompt("Please enter 'y' or 'n'");
+  while (answer !== 'yes' && answer !== 'no' && answer !== 'y' && answer !== 'n') {
+    prompt("Please enter 'yes'(y) or 'no'(n)");
     answer = readline.question().toLowerCase();
   }
 
-  if (answer[0] === 'y') {
+  if (answer[0] === 'y' || answer === 'yes') {
     keepPlaying = true;
     clearScore();
     playGame();
   } else {
-    prompt(`Thanks for playing! Goodbye!`)
+    prompt(`Thanks for playing! Goodbye!`);
   }
 }
 
 function playGame() {
   console.clear();
+  welcomeAndRules();
 
   while (keepPlaying) {
-    prompt(`Choose one: ${CHOICE_VALUES.join(', ')} (${CHOICE_KEYS.join(', ')} respectively.)`);
-    let choice = readline.question();
-    
-    while(!CHOICE_VALUES.includes(choice) && !CHOICE_KEYS.includes(choice)) {
-      prompt("That's not a valid choice.");
-      choice = readline.question();
-    }
-  
-    let randomIndex = Math.floor(Math.random() * CHOICE_VALUES.length);
-    let computerChoice = CHOICE_VALUES[randomIndex];
-    
+    playersTurn();
+    computersTurn();
     displayMatchWinner(choice, computerChoice);
     displayScore();
     chooseGameWinner(playerScore, computerScore);
