@@ -8,24 +8,30 @@
  * returns an array containing the union of the values from the two
  * 
  * ALGORITHM
- * concatenate arrays
- * find duplicates, if there are duplicates, remove the duplicates
+ * write function that checks for duplicates
+ * - use foreach to iterate through the comparison array
+ * - use includes() to check if the current iteration matches with the current comparison
+ * - if it doesn't, output that iteration into the resulting array
+ * - return resulting array
+ * write function that accepts two arrays
+ * - check for duplicates by running the arrays through the check for dupes.
+ * - concat them into one array
  * log result
  * 
  */
 
 function copyNonDupsTo(resultArray, array) {
-  array.forEach(value => {
-    if (!resultArray.includes(value)) {
-      resultArray.push(value);
+  array.forEach(element => {
+    if(!resultArray.includes(element)) {
+      resultArray.push(element);
     }
   });
 }
 
-function union(arr1, arr2) {
-  const newArray = [];
-  copyNonDupsTo(newArray, arr1);
-  copyNonDupsTo(newArray, arr2);
+function union(array1, array2) {
+  let newArray = [];
+  copyNonDupsTo(newArray, array1);
+  copyNonDupsTo(newArray, array2);
   return newArray;
 }
 
