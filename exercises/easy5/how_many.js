@@ -33,48 +33,40 @@
  * D. Data Structure (Usually this is paired with the algorithm step)
  * - How can we represent data when converting input to output
  * 
- * A. Algorith
+ * A. Algorithm
  * - Steps for converting input to output
- * 1. create variable called 'result' to store the element and it's number of occurences
- * 2. sort the array alphabetically
- * 3. iterate through each string in the input array
- *  1. create a variable called  'currElement' to store current string (array[i]) being iterated
- *  2. create a variable called 'currCount' to store how many occurences of that string. starts at 1
- *  3. create a variable called 'compare' to store array[i + 1] to compare with currElement
- *  4. while currElement === compare,
- *    1. currCount += 1
- *    2. compare = array[i + currCount];
- *  5. if the resulting array doesn't already include the currElement
- *    1. result.push([currElement, currCount]);
- *  last. set 'currCount' to 0 when there is no more occurences of currElement in array
- * 4. return the result variable
- * 
+ * 1. create variable called 'result' to store the element and it's number of occurences.
+ * 2. iterate through the array of strings
+ *  1. set result property to itself or that property set to 0 if it doesn't exist
+ *  2. increment that property's value by 1
+ * 3. create a function to log the result of the result object that accepts an object as an argument
+ *  1. for every item in the resulting object
+ *    1. log the property of the resulting item and it's value
+ * 4. use that function inside the count function to log the result to the console
  * C. Code with intent
  * - Implementation of algorithm
  */
 
 function countOccurrences(array) {
-  let result = [];
-  let sortedArray = array.sort();
+  const result = {};
 
-  for (let i = 0; i < sortedArray.length; i += 1) {
-    let currElement = sortedArray[i];
-    let currCount = 1;
-    let compare = sortedArray[i + 1];
-
-    while (currElement === compare) {
-      currCount += 1;
-      compare = array[i + currCount];
-    }
-    
-    result.push([currElement, currCount]);
+  for (let i = 0; i < array.length; i += 1) {
+    result[array[i]] = result[array[i]] || 0;
+    result[array[i]] += 1;
   }
-  return result;
+  
+  logOccurrences(result);
+}
+
+function logOccurrences(occurrences) {
+  for (let item in occurrences) {
+    console.log(`${item} => ${occurrences[item]}`);
+  }
 }
 
 let vehicles = ['car', 'car', 'truck', 'car', 'SUV', 'truck', 'motorcycle', 'motorcycle', 'car', 'truck'];
 
-console.log(countOccurrences(vehicles));
+countOccurrences(vehicles);
 
 // console output -- your output sequence may be different
 // car => 4
