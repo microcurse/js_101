@@ -50,11 +50,10 @@
 
 function average (integers) {
   let sum = 0;
-  let divisor = integers.length;
-  while (integers.length > 0) {
-    sum += integers.shift();
+  for (let i = 0; i < integers.length; i += 1) {
+    sum += integers[i];
   }
-  return Math.floor(sum / divisor);
+  return Math.floor(sum / integers.length);
 }
 
 /**
