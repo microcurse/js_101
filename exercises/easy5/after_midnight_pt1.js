@@ -73,51 +73,35 @@
  * C. Code with intent
  * - Implementation of algorithm
  */
+const MINS_PER_HOUR = 60;
+const HRS_PER_DAY = 24;
+const MINS_PER_DAY = HRS_PER_DAY * MINS_PER_HOUR;
 
-function timeOfDay(minutes) {
-  let hour = 60;
-  let day = 24;
-  let resultHrs = 0;
-  let resultMins = 0;
-
-  if (Math.sign(minutes) === 1 && minutes < 60) {
-    resultMins = minutes;
-  } else if (Math.sign(minutes) === 1 && minutes >= 60) {
-    resultHrs = Math.floor(minutes / hour);
-    minutes += minutes % hour;
-    if (resultHrs > 23) {
-      resultHrs += Math.floor(resultHrs / day);
-    }
-  } else if (Math.sign(minutes) === -1 && Math.abs(minutes) < 60) {
-    minutes = Math.abs(minutes);
-    resultHrs = 23;
-    resultMins = 60;
-    resultMins -= minutes;
-  } else if (Math.sign(minutes) === -1 && Math.abs(minutes) >= 60) {
-    minutes = Math.abs(minutes);
-    resultHrs = 23;
-    resultMins = 60;
-    resultHrs = Math.floor(minutes / hour);
-    minutes -= minutes % hour;
-    if (resultHrs > 23) {
-      resultHrs -= Math.floor(resultHrs / day);
-    }
-  }
-  console.log(`${String(resultHrs).padStart(2, '0')}:${String(resultMins).padStart(2, '0')}`);
+function leadingZero(number) {
+  return number < 10 ? `0${number}` : String(number);
 }
 
-timeOfDay(0);
-timeOfDay(-3);
-timeOfDay(35);
-timeOfDay(-1437);
-timeOfDay(3000);
-timeOfDay(800);
-timeOfDay(-4231);
+function formatTime(hours, minutes) {
+  return `${leadingZero(hours)}:${leadingZero(minutes)}`;
+}
 
-// console.log(timeOfDay(0) === "00:00");
-// console.log(timeOfDay(-3) === "23:57");
-// console.log(timeOfDay(35) === "00:35");
-// console.log(timeOfDay(-1437) === "00:03");
-// console.log(timeOfDay(3000) === "02:00");
-// console.log(timeOfDay(800) === "13:20");
-// console.log(timeOfDay(-4231) === "01:29");
+function timeOfDay(deltaMinutes) {
+  if (deltaMinutes < 0) {
+    deltaMinutes = (deltaMinutes % MINS_PER_DAY) + MINS_PER_DAY;
+  } else {
+    deltaMinutes = deltaMinutes % MINS_PER_DAY;
+  }
+
+  let hours = Math.floor(deltaMinutes / MINS_PER_HOUR);
+  let minutes = deltaMinutes % MINS_PER_HOUR;
+
+  return formatTime(hours, minutes);
+}
+
+console.log(timeOfDay(0) === "00:00");
+console.log(timeOfDay(-3) === "23:57");
+console.log(timeOfDay(35) === "00:35");
+console.log(timeOfDay(-1437) === "00:03");
+console.log(timeOfDay(3000) === "02:00");
+console.log(timeOfDay(800) === "13:20");
+console.log(timeOfDay(-4231) === "01:29");
