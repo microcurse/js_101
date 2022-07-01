@@ -73,30 +73,100 @@
  * C. Code with intent
  * - Implementation of algorithm
  */
-const MINS_PER_HOUR = 60;
-const HRS_PER_DAY = 24;
-const MINS_PER_DAY = HRS_PER_DAY * MINS_PER_HOUR;
+// const MINS_PER_HOUR = 60;
+// const HRS_PER_DAY = 24;
+// const MINS_PER_DAY = HRS_PER_DAY * MINS_PER_HOUR;
 
-function leadingZero(number) {
-  return number < 10 ? `0${number}` : String(number);
-}
+// function leadingZero(number) {
+//   return number < 10 ? `0${number}` : String(number);
+// }
 
-function formatTime(hours, minutes) {
-  return `${leadingZero(hours)}:${leadingZero(minutes)}`;
-}
+// function formatTime(hours, minutes) {
+//   return `${leadingZero(hours)}:${leadingZero(minutes)}`;
+// }
 
-function timeOfDay(deltaMinutes) {
-  if (deltaMinutes < 0) {
-    deltaMinutes = (deltaMinutes % MINS_PER_DAY) + MINS_PER_DAY;
-  } else {
-    deltaMinutes = deltaMinutes % MINS_PER_DAY;
-  }
+// function timeOfDay(deltaMinutes) {
+//   if (deltaMinutes < 0) {
+//     deltaMinutes = (deltaMinutes % MINS_PER_DAY) + MINS_PER_DAY;
+//   } else {
+//     deltaMinutes = deltaMinutes % MINS_PER_DAY;
+//   }
 
-  let hours = Math.floor(deltaMinutes / MINS_PER_HOUR);
-  let minutes = deltaMinutes % MINS_PER_HOUR;
+//   let hours = Math.floor(deltaMinutes / MINS_PER_HOUR);
+//   let minutes = deltaMinutes % MINS_PER_HOUR;
 
-  return formatTime(hours, minutes);
-}
+//   return formatTime(hours, minutes);
+// }
+
+/**
+ * Further Exploration
+ * PEDAC
+ * 
+ * P. Understand the problem
+ * - Inputs
+ * number representing minutes
+ * 
+ * - Outputs
+ * a string representing the day and time in 24 hour format "Thursday hh:mm"
+ * 
+ * - Explicit Requirements
+ * Use JavaScript's Date class to return the day of the week
+ * Assume deltaMinutes is the number of minutes before or after midnight between Saturday and Sunday
+ * 
+ * - Identify Rules
+ * deltaMinutes is the number of minutes before or after midnight between Saturday and Sunday.
+ *
+ * - Mental model (optional)
+ * Accept a number of minutes and determine if it's negative or positive so we know if we're going backward
+ * or forward in time. The JavaScript Date classes calculate time in milliseconds, therefore we need 
+ * a variable that calculates number of milliseconds in a minute. In order to calculate the day of the week, 
+ * we need a reference time to compare the given deltaMinutes with. Create a function which outputs the 
+ * resulting calculations into a string format. "Tuesday 21:30". 
+ * 
+ * E. Examples/Test Cases
+ * - Validate understanding of the problem
+ * inputs: 
+ * integers as minutes
+ * 0 | -3 | 35 | -1437 | 3000 | 800 | -4231
+ * 
+ * outputs:
+ * string representing hh:mm
+ * "Sunday 00:00" | "Saturday 23:57" | "Sunday 00:35" | "Saturday 00:03" | "Tuesday 02:00" | "Sunday 13:20" | "Thursday 01:29"
+ * 
+ * D. Data Structure (Usually this is paired with the algorithm step)
+ * - How can we represent data when converting input to output
+ * 
+ * A. Algorithm
+ * - Steps for converting input to output
+ * 
+ * C. Code with intent
+ * - Implementation of algorithm 
+ */
+
+ const MINS_PER_HOUR = 60;
+ const HRS_PER_DAY = 24;
+ const MINS_PER_DAY = HRS_PER_DAY * MINS_PER_HOUR;
+ 
+ function leadingZero(number) {
+   return number < 10 ? `0${number}` : String(number);
+ }
+ 
+ function formatTime(hours, minutes) {
+   return `${leadingZero(hours)}:${leadingZero(minutes)}`;
+ }
+ 
+ function timeOfDay(deltaMinutes) {
+   if (deltaMinutes < 0) {
+     deltaMinutes = (deltaMinutes % MINS_PER_DAY) + MINS_PER_DAY;
+   } else {
+     deltaMinutes = deltaMinutes % MINS_PER_DAY;
+   }
+ 
+   let hours = Math.floor(deltaMinutes / MINS_PER_HOUR);
+   let minutes = deltaMinutes % MINS_PER_HOUR;
+ 
+   return formatTime(hours, minutes);
+ }
 
 console.log(timeOfDay(0) === "00:00");
 console.log(timeOfDay(-3) === "23:57");
