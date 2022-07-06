@@ -138,40 +138,47 @@
  * 
  * A. Algorithm
  * - Steps for converting input to output
+ * 1. Create a constant variable for MILLISECONDS_PER_MINUTE = 6000
+ * 2. Create a constant variable for REFERENCE_TIME 
+ *  1. REFERENCE_TIME is a new date object starting from the beginning of this week (Sunday July 3, 2022, 00:00:00)
+ *  2. use the getTime() method to get the reference time in milliseconds
+ * 3. Create a constant array variable for DAY_OF_THE_WEEK which contains Sun - Sat
+ * 4. Create a new date object using the REFERENCE_TIME + deltaMinutes * MILLISECONDS_PER_MINUTE
+ * 5. Use the index of the array to return the proper day of the week when using the getDay method
+ * 6. Use the getHours to get the hours from the date object
+ * 7. Use the getMinutes method to get the minutes from the date object
+ * 8. Return the Day HH:MM using the leadingZeros function to add leading zeros if there aren't any
  * 
  * C. Code with intent
  * - Implementation of algorithm 
  */
 
- const MINS_PER_HOUR = 60;
- const HRS_PER_DAY = 24;
- const MINS_PER_DAY = HRS_PER_DAY * MINS_PER_HOUR;
- 
+ const MILLISECONDS_PER_MINUTE = 60000;
+ const REFERENCE_TIME = new Date('July 3, 2022 00:00:00').getTime();
+ const DAY_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
  function leadingZero(number) {
-   return number < 10 ? `0${number}` : String(number);
+  return number < 10 ? `0${number}` : String(number);
  }
  
- function formatTime(hours, minutes) {
-   return `${leadingZero(hours)}:${leadingZero(minutes)}`;
+ function formatTime(date) {
+  let day = DAY_OF_WEEK[date.getDay()];
+  let hours = date.getHours();
+  let minutes = date.getMinutes();
+
+  return `${day} ${leadingZero(hours)}:${leadingZero(minutes)}`;
  }
  
  function timeOfDay(deltaMinutes) {
-   if (deltaMinutes < 0) {
-     deltaMinutes = (deltaMinutes % MINS_PER_DAY) + MINS_PER_DAY;
-   } else {
-     deltaMinutes = deltaMinutes % MINS_PER_DAY;
-   }
- 
-   let hours = Math.floor(deltaMinutes / MINS_PER_HOUR);
-   let minutes = deltaMinutes % MINS_PER_HOUR;
- 
-   return formatTime(hours, minutes);
+  let date = new Date(REFERENCE_TIME + deltaMinutes * MILLISECONDS_PER_MINUTE);
+
+  return formatTime(date);
  }
 
-console.log(timeOfDay(0) === "00:00");
-console.log(timeOfDay(-3) === "23:57");
-console.log(timeOfDay(35) === "00:35");
-console.log(timeOfDay(-1437) === "00:03");
-console.log(timeOfDay(3000) === "02:00");
-console.log(timeOfDay(800) === "13:20");
-console.log(timeOfDay(-4231) === "01:29");
+console.log(timeOfDay(0) === "Sunday 00:00");
+console.log(timeOfDay(-3) === "Saturday 23:57");
+console.log(timeOfDay(35) === "Sunday 00:35");
+console.log(timeOfDay(-1437) === "Saturday 00:03");
+console.log(timeOfDay(3000) === "Tuesday 02:00");
+console.log(timeOfDay(800) === "Sunday 13:20");
+console.log(timeOfDay(-4231) === "Thursday 01:29");
