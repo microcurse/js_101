@@ -87,13 +87,6 @@ Output:
 - Create test cases
 - Code with intent
 
-**Data Structure**
-
-
-**Algorithm**
-Iterate through the object's keys in order to access the values. Check if the value of the currently iterated key matches 'Fruit'. Return the resulting key-value pairs.
-
-
 ## Final Thoughts
 
 - Not a completely linear process
