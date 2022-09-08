@@ -60,6 +60,8 @@ Do not mutate the original array
 1. Create an empty array variable to store the result
 2. Iterate through the array
 3. Double each number with an odd index
+  - Question: How do we find out if a number's index is odd?
+    - Use modulo to confirm if a number has an odd index
 4. Return the array
 5. Console log the original array to ensure it was not mutated
 
