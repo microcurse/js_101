@@ -69,23 +69,8 @@ Array of objects
   - Don't worry about efficiency for now
 
 1. Iterate through array of objects
-2. Create an empty array variable to store all published dates
-3. Sort those published dates
-4. Find a way to assign those published dates to their respective objects (books)
-5. Return the newly sorted array of objects
-
-
-
-2. Iterate through the current object
-3. Find and store the published date for comparison
-  - Convert to numeric value for comparison
-4. Return current book's published date
-5. Iterate through the next object
-6. Find and store the published date for comparison
-7. Return that book's published date
-8. Compare first book's published date with the next book's published date
-9. Store the smaller published date before the next published date
-10. Keep going
+2. Access the object property `published` value
+3. Sort the objects by earliest `published` value
 
 
 ## C: Implementing a solution in Code
