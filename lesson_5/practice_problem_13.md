@@ -57,10 +57,10 @@ Multi-dimensional arrays
 
 1. Iterate over the data structure (array)
 2. Create an empty number variable to store current sum
-2. Sum up all the odd numbers
+3. Sum up all the odd numbers
   - Use modulo to find odd numbers
   - Sum up the numbers and store in current sum variable
-4. Find next
+4. Go to next array set and do the same
 5. Return array
 
 
