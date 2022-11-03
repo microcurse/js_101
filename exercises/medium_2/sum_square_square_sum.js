@@ -1,18 +1,12 @@
-function sumSquareDifference(num) {
-  let sumSquared = 0;
-  let squaredSum = 0;
+function sumSquareDifference(count) {
+  let sum = 0;
+  let sumOfSquares = 0;
 
-  for (let count = 1; count <= num; count += 1) {
-    sumSquared += count;
+  for (let num = 1; num <= count; num += 1) {
+    sum += num;
+    sumOfSquares += Math.pow(num, 2);
   }
-
-  sumSquared = Math.pow(sumSquared, 2);
-
-  for (let count = 1; count <= num; count += 1) {
-    squaredSum += Math.pow(count, 2);
-  }
-
-  return sumSquared - squaredSum;
+  return Math.pow(sum, 2) - sumOfSquares;
 }
 
 console.log(sumSquareDifference(3));      // 22 --> (1 + 2 + 3)**2 - (1**2 + 2**2 + 3**2)
