@@ -1,16 +1,20 @@
 function longestSentence(paragraph) {
-  let words = paragraph.split(' ');
+  let sentences = paragraph.match(/\w.*?[.!?]/g);
 
-  const PUNCTUATION = /([.!?])\s/;
-  const CAPITALIZEDLETTER = /[A-Z]\g/;
+  let longest = sentences.reduce(
+    function(longest, sentence) {
+      let length = sentence.split(/\s/).length;
+      if (length > longest.length) {
+        return {text: sentence, length: length};
+      } else {
+        return longest;
+      }
+    },
+  { text: "", length: 0}
+  );
 
-  console.log(paragraph.match(PUNCTUATION));
-}
-
-function getSentences(paragraph) {
-  const PUNCTUATION = /([.!?])\s/;
-  const CAPITALIZEDLETTER = /[A-Z]\g/;
-  return paragraph.slice(paragraph.indexOf(CAPITALIZEDLETTER), paragraph.indexOf(PUNCTUATION));
+  console.log(longest.text + "\n");
+  console.log("The longest sentence has " + longest.length + " words.\n");
 }
 
 let longText =
