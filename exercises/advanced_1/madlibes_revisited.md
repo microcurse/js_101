@@ -69,10 +69,8 @@ string
 
 1. Create an object called replacementText which stores all of the replacement texts as properties
 2. Create template to pass into the function
-3. Use a special character to identify each string that needs to be replaced with one of the replacementTexts
-  - When using a regex which finds all instances of %adjective, they all become the same.
-    - How do I randomize each replacement of %adjective?
-      - Using bracket notation and Math.random() * the length of the array, it outputs a random replacement text as expected. However, the replacement text method replaces all instances of adjective with that given random text.
+3. Use a special character to identify each substring that needs to be replaced with one of the replacementTexts
+  - use %adjective to identify which substring needs to be replaced
 3. Use Math.random() * 10 to select an element from each of the replacement text arrays
 4. console log the result
 
