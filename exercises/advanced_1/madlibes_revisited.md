@@ -71,6 +71,7 @@ string
 2. Create template to pass into the function
 3. Use a special character to identify each substring that needs to be replaced with one of the replacementTexts
   - use %adjective to identify which substring needs to be replaced
+4. 
 3. Use Math.random() * 10 to select an element from each of the replacement text arrays
 4. console log the result
 
