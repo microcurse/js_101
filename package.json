@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "console-emojis": "^1.0.4",
     "esrever": "^0.2.0",
     "readline-sync": "^1.4.10"
   }
