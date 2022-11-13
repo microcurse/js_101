@@ -2,15 +2,14 @@ const readline = require('../node_modules/readline-sync');
 const INITIAL_MARKER = ' ';
 const HUMAN_MARKER = 'X';
 const COMPUTER_MARKER = 'O';
+const GAMES_TO_WIN = 3;
 
 function prompt(msg) {
   console.log(`=> ${msg}`);
 }
 
-function displayBoard(board) {
+function displayBoard(board, score) {
   console.clear();
-
-  console.log(`You are ${HUMAN_MARKER}. Computer is ${COMPUTER_MARKER}`);
 
   console.log('');
   console.log('     |     |');
@@ -25,6 +24,10 @@ function displayBoard(board) {
   console.log(`  ${board['7']}  |  ${board['8']}  |  ${board['9']}`);
   console.log('     |     |');
   console.log('');
+
+  console.log(`You are ${HUMAN_MARKER}. Computer is ${COMPUTER_MARKER}`);
+  
+  displayScore(score);
 }
 
 function initializeBoard() {
@@ -37,76 +40,16 @@ function initializeBoard() {
   return board;
 }
 
-function joinOr(array, delimiter, lastDelimiter) {
-  /**
-   * PEDAC
-   * P: Understanding the Problem
-   * 
-   *  Write a method that joins an array into a string with a commas (,) delimiting each 
-   *  element and 'or' delimiting the last two elements in the array.
-   * 
-   *  Explicit requirements:
-   *  - Input: an array of numbers and two strings
-   *  - Output: a string
-   *  - Output commas (,) to delimit the elements in the array if there's no given first string
-   *  - Output 'or' before the last element in array if not given a second string
-   * 
-   * 
-   *  Implicit requirements:
-   *  - Array will always contain numbers
-   *  - The first given string is used as a delimiter in place of default comma (,)
-   *  - The second given string is used in place of default 'or'
-   *  - If array is empty, return an empty string.
-   *  - If array has 1 element, return that element
-   *  - If array only has 2 elements, only use the default 'or' delimeter, or the 
-   *    given second string
-   *  
-   * E: Examples and test cases
-   *  
-   *  Input:
-   *  [1, 2, 3]
-   *  [1, 2, 3], ';'
-   *  [1, 2, 3], ', ' 'and'
-   *  []
-   *  [5]
-   *  [1, 2]
-   * 
-   *  Output:
-   *  "1, 2, or 3"
-   *  "1; 2; or 3"
-   *  "1, 2, and 3"
-   *  ""
-   *  "5"
-   *  "1 or 2"
-   * 
-   * D: Data structures
-   * 
-   *  Arrays and strings
-   * 
-   * A: Algorithm
-   * 
-   * - Check how many elements are in the array
-   *  - If there are 3 or more elements
-   *    - Use commas between each element
-   *    - Use 'or' between the last two elements
-   *  - If there are only 2 elements
-   *    - Use 'or' between the two elements
-   *  - If there's only 1 element
-   *    - Outpt that element into a string
-   * 
-   * 
-   */
-
-
-  if (array.length >= 3) {
-    // Join the array with comma delimiters
-      // the join method does this with commas as we require
-      // Use method lastIndexOf to target the last comma
-      // replace it with 'or'
-        // How do I 'replace' it?
-    // The last two elements should be dilimited by an 'or'
-    // Output the array as a string
-    
+function joinOr(array, delimiter = ', ', joinWord = 'or') {
+  switch(array.length) {
+    case 0:
+      return '';
+    case 1:
+      return `${array[0]}`;
+    case 2:
+      return array.join(` ${joinWord} `);
+    default:
+      return array.slice(0, array.length - 1).join(delimiter) + `${delimiter}${joinWord} ${array[array.length - 1]}`;
   }
 }
 
@@ -114,7 +57,7 @@ function playerChoosesSquare(board) {
   let square; // declared here so we can use it outside the loop
 
   while (true) {
-    prompt(`Choose a square (${emptySquares(board).join(', ')})`);
+    prompt(`Choose a square (${joinOr(emptySquares(board))})`);
     square = readline.question().trim(); // input trimmed to allow spaces in input
     
     if (emptySquares(board).includes(square)) break;
@@ -142,6 +85,14 @@ function boardFull(board) {
 
 function someoneWon(board) {
   return !!detectWinner(board);
+}
+
+function updateScore(winner, score) {
+  return score[winner] += 1;
+}
+
+function displayScore(score) {
+  return prompt(`Player score: ${score.Player}, Computer score: ${score.Computer}`);
 }
 
 function detectWinner(board) {
@@ -172,31 +123,54 @@ function detectWinner(board) {
   return null;
 }
 
-while (true) {
-  let board = initializeBoard();
-
-  while (true) {
-    displayBoard(board);
-  
-    playerChoosesSquare(board);
-    if (someoneWon(board) || boardFull(board)) break;
-    
-    computerChoosesSquare(board);
-    if (someoneWon(board) || boardFull(board)) break;
-  
-  }
-  
-  displayBoard(board);
-
-  if (someoneWon(board)) {
-    prompt(`${detectWinner(board)} won!`);
-  } else {
-    prompt("It's a tie!");
-  }
-
+function playAgain() {
   prompt('Play again? (y or n)');
   let answer = readline.question().toLowerCase()[0];
-  if (answer !== 'y') break;
+  return answer === 'y';
+}
+
+// Game Loop
+while (true) {
+  let score = { Player: 0, Computer: 0 };
+  let round = 1;
+  
+  while (true) {
+    let board = initializeBoard();
+
+    while (true) {
+      displayBoard(board, score);
+    
+      playerChoosesSquare(board);
+      if (someoneWon(board) || boardFull(board)) break;
+      
+      computerChoosesSquare(board);
+      if (someoneWon(board) || boardFull(board)) break;
+    
+    }
+    
+    displayBoard(board, score);
+    
+    if (someoneWon(board)) {
+      updateScore(detectWinner(board), score);
+      prompt(`${detectWinner(board)} won round ${round}`);
+    } else {
+      prompt("It's a tie!");
+    }
+
+    // Check if someone won the game.
+    if (Object.values(score).includes(GAMES_TO_WIN)) {
+      displayBoard(board, score);
+      prompt(`${detectWinner(board)} won the game!`); 
+      break;
+    }
+    
+    prompt('Press any key to continue playing');
+    readline.question();
+    
+    round++;
+  }
+  
+  if (!playAgain()) break;
 }
 
 prompt('Thanks for playing Tic Tac Toe!');
