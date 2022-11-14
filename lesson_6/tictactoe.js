@@ -3,9 +3,14 @@ const INITIAL_MARKER = ' ';
 const HUMAN_MARKER = 'X';
 const COMPUTER_MARKER = 'O';
 const GAMES_TO_WIN = 3;
+const WINNING_LINES = [
+  [1, 2, 3], [4, 5, 6], [7, 8, 9],  // rows
+  [1, 4, 7], [2, 5, 8], [3, 6, 9],  // columns
+  [1, 5, 9], [3, 5, 7]              // diagonals
+];
 
 function prompt(msg) {
-  console.log(`=> ${msg}`);
+  console.log(`\n=> ${msg}`);
 }
 
 function displayBoard(board, score) {
@@ -69,34 +74,35 @@ function playerChoosesSquare(board) {
 }
 
 function computerChoosesSquare(board) {
-  let randomIndex = Math.floor(Math.random() * emptySquares(board).length);
+  let square;
 
-  let square = emptySquares(board)[randomIndex];
+  for (let index = 0; index < WINNING_LINES.length; index++) {
+    let line = WINNING_LINES[index];
+    square = findAtRiskSquare(line, board);
+    if (square) break;
+  }
+
+  if (!square) {
+    let randomIndex = Math.floor(Math.random() * emptySquares(board).length);
+    square = emptySquares(board)[randomIndex];
+  }
+
   board[square] = COMPUTER_MARKER;
 }
 
+function findAtRiskSquare(line, board) {
+  // Check if the board has two HUMAN_MARKERS next to each other
+  let markersInLine = line.map(square => board[square]);
 
-/**
- * PEDAC
- * Defensive Minded Computer AI
- * 
- * Problem
- * Let's make the computer defensive-minded so that, when an immediate threat exists, 
- * it will try to defend the 3rd square. An immediate threat occurs when the human player 
- * has 2 squares in a row with the 3rd square unoccupied. If there's no immediate threat,
- * the computer can pick a random square.
- * 
- * Explicit Requirements
- *  - Input: board state
- *  - Output: selection of an empty square (board[square]);
- * 
- * Implicit Requirements
- *  - It will choose random if there are no immediate threats
- * 
- * We need to find the square that is at risk of winning the player the game.
- * - Find an empty square in a line where the other two squares belong to the player.
- * 
- */
+  if (markersInLine.filter(val => val === HUMAN_MARKER).length === 2) {
+    let unusedSquare = line.find(square => board[square] === INITIAL_MARKER);
+    if (unusedSquare !== undefined) {
+      return unusedSquare;
+    }
+  }
+
+  return null
+}
 
 function emptySquares(board) {
   return Object.keys(board).filter(key => board[key] === INITIAL_MARKER);
@@ -119,14 +125,9 @@ function displayScore(score) {
 }
 
 function detectWinner(board) {
-  let winningLines = [
-    [1, 2, 3], [4, 5, 6], [7, 8, 9],  // rows
-    [1, 4, 7], [2, 5, 8], [3, 6, 9],  // columns
-    [1, 5, 9], [3, 5, 7]              // diagonals
-  ];
 
-  for (let line = 0; line < winningLines.length; line++) {
-    let [ sq1, sq2, sq3 ] = winningLines[line];
+  for (let line = 0; line < WINNING_LINES.length; line++) {
+    let [ sq1, sq2, sq3 ] = WINNING_LINES[line];
 
     if (
       board[sq1] === HUMAN_MARKER &&
@@ -186,7 +187,7 @@ while (true) {
     // Displays updated board and score;
     displayBoard(board, score);
     
-    // Check if someone won the match
+    // Check if someone won the round
     someoneWonRound(board, score, round);
 
     // Check if someone won the game.
@@ -200,15 +201,13 @@ while (true) {
     // Increment the round
     round++;
 
-    prompt('Press any key to continue playing');
-
     // This is just here to pause and show the board state and score.
     // Maybe I should come up with a better way to handle it.
-    readline.question();
+    readline.question('\nPress any key to continue playing ');
     
   }
   
   if (!playAgain()) break;
 }
 
-prompt('Thanks for playing Tic Tac Toe!');
+prompt('\nThanks for playing Tic Tac Toe!');
