@@ -75,6 +75,29 @@ function computerChoosesSquare(board) {
   board[square] = COMPUTER_MARKER;
 }
 
+
+/**
+ * PEDAC
+ * Defensive Minded Computer AI
+ * 
+ * Problem
+ * Let's make the computer defensive-minded so that, when an immediate threat exists, 
+ * it will try to defend the 3rd square. An immediate threat occurs when the human player 
+ * has 2 squares in a row with the 3rd square unoccupied. If there's no immediate threat,
+ * the computer can pick a random square.
+ * 
+ * Explicit Requirements
+ *  - Input: board state
+ *  - Output: selection of an empty square (board[square]);
+ * 
+ * Implicit Requirements
+ *  - It will choose random if there are no immediate threats
+ * 
+ * We need to find the square that is at risk of winning the player the game.
+ * - Find an empty square in a line where the other two squares belong to the player.
+ * 
+ */
+
 function emptySquares(board) {
   return Object.keys(board).filter(key => board[key] === INITIAL_MARKER);
 }
@@ -123,6 +146,16 @@ function detectWinner(board) {
   return null;
 }
 
+function someoneWonRound(board, score, round) {
+  if (someoneWon(board)) {
+    updateScore(detectWinner(board), score);
+    return prompt(`${detectWinner(board)} won round ${round}`);
+  } else {
+    return prompt("It's a tie!");
+  }
+}
+
+// Ask the user if they want to play again
 function playAgain() {
   prompt('Play again? (y or n)');
   let answer = readline.question().toLowerCase()[0];
@@ -135,8 +168,10 @@ while (true) {
   let round = 1;
   
   while (true) {
+    // Start board
     let board = initializeBoard();
 
+    // Game mechanics
     while (true) {
       displayBoard(board, score);
     
@@ -148,26 +183,29 @@ while (true) {
     
     }
     
+    // Displays updated board and score;
     displayBoard(board, score);
     
-    if (someoneWon(board)) {
-      updateScore(detectWinner(board), score);
-      prompt(`${detectWinner(board)} won round ${round}`);
-    } else {
-      prompt("It's a tie!");
-    }
+    // Check if someone won the match
+    someoneWonRound(board, score, round);
 
     // Check if someone won the game.
+    // I tried moving this to its own function but I need to find another way to break the while loop
     if (Object.values(score).includes(GAMES_TO_WIN)) {
       displayBoard(board, score);
-      prompt(`${detectWinner(board)} won the game!`); 
+      prompt(`${detectWinner(board)} won the game!`);
       break;
     }
-    
+
+    // Increment the round
+    round++;
+
     prompt('Press any key to continue playing');
+
+    // This is just here to pause and show the board state and score.
+    // Maybe I should come up with a better way to handle it.
     readline.question();
     
-    round++;
   }
   
   if (!playAgain()) break;
