@@ -3,11 +3,13 @@ const INITIAL_MARKER = ' ';
 const HUMAN_MARKER = 'X';
 const COMPUTER_MARKER = 'O';
 const GAMES_TO_WIN = 3;
+const CENTER_SQUARE = 5;
 const WINNING_LINES = [
   [1, 2, 3], [4, 5, 6], [7, 8, 9],  // rows
   [1, 4, 7], [2, 5, 8], [3, 6, 9],  // columns
   [1, 5, 9], [3, 5, 7]              // diagonals
 ];
+
 
 function prompt(msg) {
   console.log(`\n=> ${msg}`);
@@ -73,28 +75,49 @@ function playerChoosesSquare(board) {
   board[square] = HUMAN_MARKER;
 }
 
+
 function computerChoosesSquare(board) {
   let square;
 
+  // offense
   for (let index = 0; index < WINNING_LINES.length; index++) {
     let line = WINNING_LINES[index];
-    square = findAtRiskSquare(line, board);
+    square = findAtRiskSquare(line, board, COMPUTER_MARKER);
     if (square) break;
   }
+  debugger;
 
+  // defense 
   if (!square) {
+    for (let index = 0; index < WINNING_LINES.length; index++) {
+      let line = WINNING_LINES[index];
+      square = findAtRiskSquare(line, board, HUMAN_MARKER);
+      if (square) break;
+    }
+  }
+  debugger;
+
+  if (!square && board[CENTER_SQUARE] === INITIAL_MARKER) {
+    // pick number 5, milord
+    board['5'] = COMPUTER_MARKER;
+  } else if (!square && board[CENTER_SQUARE] !== INITIAL_MARKER) {
+    // random
     let randomIndex = Math.floor(Math.random() * emptySquares(board).length);
     square = emptySquares(board)[randomIndex];
   }
+  debugger;
 
   board[square] = COMPUTER_MARKER;
 }
 
-function findAtRiskSquare(line, board) {
-  // Check if the board has two HUMAN_MARKERS next to each other
+function findAtRiskSquare(line, board, marker) {
+  // This creates a new array and populates the values of the board using the 
+  // winning lines as the index.
   let markersInLine = line.map(square => board[square]);
 
-  if (markersInLine.filter(val => val === HUMAN_MARKER).length === 2) {
+  // Find out if there are 2 HUMAN_MARKERS on the board with the same index as
+  // winning lines.
+  if (markersInLine.filter(val => val === marker).length === 2) {
     let unusedSquare = line.find(square => board[square] === INITIAL_MARKER);
     if (unusedSquare !== undefined) {
       return unusedSquare;
