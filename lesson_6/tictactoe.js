@@ -4,37 +4,43 @@ const HUMAN_MARKER = 'X';
 const COMPUTER_MARKER = 'O';
 const GAMES_TO_WIN = 3;
 const CENTER_SQUARE = 5;
+const WHO_PLAYS_FIRST = {choose: ' '}
 const WINNING_LINES = [
   [1, 2, 3], [4, 5, 6], [7, 8, 9],  // rows
   [1, 4, 7], [2, 5, 8], [3, 6, 9],  // columns
   [1, 5, 9], [3, 5, 7]              // diagonals
 ];
 
-
 function prompt(msg) {
   console.log(`\n=> ${msg}`);
 }
 
-function displayBoard(board, score) {
+function displayBoard(board, score, round) {
   console.clear();
+  displayScore(score, round);
+
 
   console.log('');
-  console.log('     |     |');
-  console.log(`  ${board['1']}  |  ${board['2']}  |  ${board['3']}`);
-  console.log('     |     |');
-  console.log('-----+-----+-----');
-  console.log('     |     |');
-  console.log(`  ${board['4']}  |  ${board['5']}  |  ${board['6']}`);
-  console.log('     |     |');
-  console.log('-----+-----+-----');
-  console.log('     |     |');
-  console.log(`  ${board['7']}  |  ${board['8']}  |  ${board['9']}`);
-  console.log('     |     |');
+  console.log('            |            |');
+  console.log('            |            |');
+  console.log(`     ${board['1']}      |     ${board['2']}      |      ${board['3']}`);
+  console.log('            |            |');
+  console.log('            |            |');
+  console.log('------------+------------+------------');
+  console.log('            |            |');
+  console.log('            |            |');
+  console.log(`     ${board['4']}      |     ${board['5']}      |      ${board['6']}`);
+  console.log('            |            |');
+  console.log('            |            |');
+  console.log('------------+------------+------------');
+  console.log('            |            |');
+  console.log('            |            |');
+  console.log(`     ${board['7']}      |     ${board['8']}      |      ${board['9']}`);
+  console.log('            |            |');
+  console.log('            |            |');
   console.log('');
-
-  console.log(`You are ${HUMAN_MARKER}. Computer is ${COMPUTER_MARKER}`);
   
-  displayScore(score);
+  console.log(`You are ${HUMAN_MARKER}. Computer is ${COMPUTER_MARKER}`);
 }
 
 function initializeBoard() {
@@ -101,7 +107,8 @@ function computerChoosesSquare(board) {
     // pick number 5, milord
     board['5'] = COMPUTER_MARKER;
   } else if (!square && board[CENTER_SQUARE] !== INITIAL_MARKER) {
-    // random
+    
+    // random placement if there are no offensive or defense moves
     let randomIndex = Math.floor(Math.random() * emptySquares(board).length);
     square = emptySquares(board)[randomIndex];
   }
@@ -143,8 +150,10 @@ function updateScore(winner, score) {
   return score[winner] += 1;
 }
 
-function displayScore(score) {
-  return prompt(`Player score: ${score.Player}, Computer score: ${score.Computer}`);
+function displayScore(score, round) {
+  console.log(`--------------- Round ${round} ---------------`);
+  console.log(`| Player score: ${score.Player} | Computer score: ${score.Computer} |`);
+  console.log(`---------------------------------------`);
 }
 
 function detectWinner(board) {
@@ -179,6 +188,14 @@ function someoneWonRound(board, score, round) {
   }
 }
 
+function whoPlaysFirst(){
+  console.clear();
+  prompt("Welcome to Tic-Tac-Toe!");
+  prompt("Please type 'p' if you'd like to go first. Otherwise, type 'c' to let the computer go first.");
+  WHO_PLAYS_FIRST['choose'] = readline.question().toLowerCase()[0];
+
+}
+
 // Ask the user if they want to play again
 function playAgain() {
   prompt('Play again? (y or n)');
@@ -190,25 +207,56 @@ function playAgain() {
 while (true) {
   let score = { Player: 0, Computer: 0 };
   let round = 1;
+
+  whoPlaysFirst();
   
   while (true) {
+
+    /**
+     * Problem
+     * Make a change to the program that makes the computer go first. Then, make
+     * it so the player can choose who goes first.
+     * 
+     * How do I change it so the computer goes first?
+     * - Moving the computerChoosesSquare above the playerChoosesSquare function causes
+     *   the game to place a computer marker before the player does without displaying it
+     *   on the board.
+     * 
+     * - The computer marker needs to be placed on the board before the player makese their
+     *   move
+     */
+
     // Start board
     let board = initializeBoard();
 
     // Game mechanics
     while (true) {
-      displayBoard(board, score);
-    
-      playerChoosesSquare(board);
-      if (someoneWon(board) || boardFull(board)) break;
+
+      if (WHO_PLAYS_FIRST['choose'] === 'c') {
+        // Computer goes first
+        computerChoosesSquare(board);
+        if (someoneWon(board) || boardFull(board)) break;
       
-      computerChoosesSquare(board);
-      if (someoneWon(board) || boardFull(board)) break;
-    
+        displayBoard(board, score, round);
+      
+        playerChoosesSquare(board);
+        if (someoneWon(board) || boardFull(board)) break;
+        
+      } else if (WHO_PLAYS_FIRST['choose'] === 'p') {
+        // Player goes first
+        displayBoard(board, score, round);
+        
+        playerChoosesSquare(board);
+        if (someoneWon(board) || boardFull(board)) break;
+        
+        computerChoosesSquare(board);
+        if (someoneWon(board) || boardFull(board)) break;
+
+      } 
     }
     
     // Displays updated board and score;
-    displayBoard(board, score);
+    displayBoard(board, score, round);
     
     // Check if someone won the round
     someoneWonRound(board, score, round);
@@ -216,8 +264,8 @@ while (true) {
     // Check if someone won the game.
     // I tried moving this to its own function but I need to find another way to break the while loop
     if (Object.values(score).includes(GAMES_TO_WIN)) {
-      displayBoard(board, score);
-      prompt(`${detectWinner(board)} won the game!`);
+      displayBoard(board, score, round);
+      prompt(`${detectWinner(board)} wins the game!`);
       break;
     }
 
@@ -233,4 +281,4 @@ while (true) {
   if (!playAgain()) break;
 }
 
-prompt('\nThanks for playing Tic Tac Toe!');
+prompt('\nThanks for playing Tic-Tac-Toe!');
