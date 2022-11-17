@@ -12,13 +12,12 @@ const WINNING_LINES = [
 ];
 
 function prompt(msg) {
-  console.log(`\n=> ${msg}`);
+  console.log(`=> ${msg}`);
 }
 
 function displayBoard(board, score, round) {
   console.clear();
   displayScore(score, round);
-
 
   console.log('');
   console.log('            |            |');
@@ -191,16 +190,35 @@ function someoneWonRound(board, score, round) {
 function whoPlaysFirst(){
   console.clear();
   prompt("Welcome to Tic-Tac-Toe!");
-  prompt("Please type 'p' if you'd like to go first. Otherwise, type 'c' to let the computer go first.");
-  WHO_PLAYS_FIRST['choose'] = readline.question().toLowerCase()[0];
 
+  while (true) {
+    prompt("Type 'p' to go first, otherwise type 'c' to let the computer go first.");
+    WHO_PLAYS_FIRST['choose'] = readline.question().toLowerCase();
+
+    if (WHO_PLAYS_FIRST['choose'] === 'p' || WHO_PLAYS_FIRST['choose'] === 'c') {
+      break;
+    }
+
+    prompt("Invalid choice.");
+  }
 }
 
 // Ask the user if they want to play again
 function playAgain() {
-  prompt('Play again? (y or n)');
-  let answer = readline.question().toLowerCase()[0];
-  return answer === 'y';
+  let answer = ' ';
+  
+  while(true) {
+    prompt('Play again? (y or n)');
+
+    answer = readline.question().toLowerCase();
+
+    if (answer === 'y' || answer === 'n') {
+      return answer;
+    };
+
+    prompt("Invalid choice.");
+
+  }
 }
 
 // Game Loop
@@ -211,20 +229,6 @@ while (true) {
   whoPlaysFirst();
   
   while (true) {
-
-    /**
-     * Problem
-     * Make a change to the program that makes the computer go first. Then, make
-     * it so the player can choose who goes first.
-     * 
-     * How do I change it so the computer goes first?
-     * - Moving the computerChoosesSquare above the playerChoosesSquare function causes
-     *   the game to place a computer marker before the player does without displaying it
-     *   on the board.
-     * 
-     * - The computer marker needs to be placed on the board before the player makese their
-     *   move
-     */
 
     // Start board
     let board = initializeBoard();
@@ -278,7 +282,7 @@ while (true) {
     
   }
   
-  if (!playAgain()) break;
+  if (playAgain() === 'n') break;
 }
 
 prompt('\nThanks for playing Tic-Tac-Toe!');
