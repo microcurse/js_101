@@ -4,7 +4,7 @@ const HUMAN_MARKER = 'X';
 const COMPUTER_MARKER = 'O';
 const GAMES_TO_WIN = 3;
 const CENTER_SQUARE = 5;
-const WHO_PLAYS_FIRST = {choose: ' '}
+const WHO_PLAYS_FIRST = {choose: ' '};
 const WINNING_LINES = [
   [1, 2, 3], [4, 5, 6], [7, 8, 9],  // rows
   [1, 4, 7], [2, 5, 8], [3, 6, 9],  // columns
@@ -44,7 +44,6 @@ function displayBoard(board, score, round) {
 
 function initializeBoard() {
   let board = {};
-
   for (let square = 1; square <= 9; square++) {
     board[String(square)] = ' ';
   }
@@ -66,11 +65,11 @@ function joinOr(array, delimiter = ', ', joinWord = 'or') {
 }
 
 function playerChoosesSquare(board) {
-  let square; // declared here so we can use it outside the loop
+  let square;
 
   while (true) {
     prompt(`Choose a square (${joinOr(emptySquares(board))})`);
-    square = readline.question().trim(); // input trimmed to allow spaces in input
+    square = readline.question().trim();
     
     if (emptySquares(board).includes(square)) break;
     
@@ -90,7 +89,6 @@ function computerChoosesSquare(board) {
     square = findAtRiskSquare(line, board, COMPUTER_MARKER);
     if (square) break;
   }
-  debugger;
 
   // defense 
   if (!square) {
@@ -100,7 +98,6 @@ function computerChoosesSquare(board) {
       if (square) break;
     }
   }
-  debugger;
 
   if (!square && board[CENTER_SQUARE] === INITIAL_MARKER) {
     // pick number 5, milord
@@ -111,18 +108,13 @@ function computerChoosesSquare(board) {
     let randomIndex = Math.floor(Math.random() * emptySquares(board).length);
     square = emptySquares(board)[randomIndex];
   }
-  debugger;
 
   board[square] = COMPUTER_MARKER;
 }
 
 function findAtRiskSquare(line, board, marker) {
-  // This creates a new array and populates the values of the board using the 
-  // winning lines as the index.
   let markersInLine = line.map(square => board[square]);
 
-  // Find out if there are 2 HUMAN_MARKERS on the board with the same index as
-  // winning lines.
   if (markersInLine.filter(val => val === marker).length === 2) {
     let unusedSquare = line.find(square => board[square] === INITIAL_MARKER);
     if (unusedSquare !== undefined) {
@@ -151,7 +143,7 @@ function updateScore(winner, score) {
 
 function displayScore(score, round) {
   console.log(`--------------- Round ${round} ---------------`);
-  console.log(`| Player score: ${score.Player} | Computer score: ${score.Computer} |`);
+  console.log(`  Player score: ${score.Player}   Computer score: ${score.Computer}  `);
   console.log(`---------------------------------------`);
 }
 
@@ -203,60 +195,53 @@ function whoPlaysFirst(){
   }
 }
 
+function chooseSquare(board, currentPlayer) {
+  if (currentPlayer === 'p') {
+    return playerChoosesSquare(board);
+  } else if (currentPlayer === 'c') {
+    return computerChoosesSquare(board);
+  }
+}
+
+function alternatePlayer(currentPlayer) {
+  if (currentPlayer === 'p') return 'c';
+  return 'p';
+}
+
 // Ask the user if they want to play again
 function playAgain() {
   let answer = ' ';
   
   while(true) {
     prompt('Play again? (y or n)');
-
     answer = readline.question().toLowerCase();
-
     if (answer === 'y' || answer === 'n') {
       return answer;
     };
-
     prompt("Invalid choice.");
-
   }
+  
 }
 
 // Game Loop
 while (true) {
   let score = { Player: 0, Computer: 0 };
   let round = 1;
-
+  debugger;
+  
   whoPlaysFirst();
+  let currentPlayer = WHO_PLAYS_FIRST['choose'];
   
   while (true) {
-
     // Start board
     let board = initializeBoard();
 
     // Game mechanics
     while (true) {
-
-      if (WHO_PLAYS_FIRST['choose'] === 'c') {
-        // Computer goes first
-        computerChoosesSquare(board);
-        if (someoneWon(board) || boardFull(board)) break;
-      
-        displayBoard(board, score, round);
-      
-        playerChoosesSquare(board);
-        if (someoneWon(board) || boardFull(board)) break;
-        
-      } else if (WHO_PLAYS_FIRST['choose'] === 'p') {
-        // Player goes first
-        displayBoard(board, score, round);
-        
-        playerChoosesSquare(board);
-        if (someoneWon(board) || boardFull(board)) break;
-        
-        computerChoosesSquare(board);
-        if (someoneWon(board) || boardFull(board)) break;
-
-      } 
+      displayBoard(board, score, round);
+      chooseSquare(board, currentPlayer);
+      currentPlayer = alternatePlayer(currentPlayer);
+      if (someoneWon(board) || boardFull(board)) break;
     }
     
     // Displays updated board and score;
@@ -278,8 +263,7 @@ while (true) {
 
     // This is just here to pause and show the board state and score.
     // Maybe I should come up with a better way to handle it.
-    readline.question('\nPress any key to continue playing ');
-    
+    readline.question('\nPress any key to continue playing '); 
   }
   
   if (playAgain() === 'n') break;
