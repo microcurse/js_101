@@ -244,14 +244,10 @@ while (true) {
       if (someoneWon(board) || boardFull(board)) break;
     }
     
-    // Displays updated board and score;
     displayBoard(board, score, round);
     
-    // Check if someone won the round
     someoneWonRound(board, score, round);
 
-    // Check if someone won the game.
-    // I tried moving this to its own function but I need to find another way to break the while loop
     if (Object.values(score).includes(GAMES_TO_WIN)) {
       displayBoard(board, score, round);
       prompt(`${detectWinner(board)} wins the game!`);
@@ -261,8 +257,6 @@ while (true) {
     // Increment the round
     round++;
 
-    // This is just here to pause and show the board state and score.
-    // Maybe I should come up with a better way to handle it.
     readline.question('\nPress any key to continue playing '); 
   }
   
