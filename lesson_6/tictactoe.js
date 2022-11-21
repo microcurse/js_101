@@ -156,22 +156,16 @@ function boardFull(board) {
 function detectWinner(board) {
   for (let line = 0; line < WINNING_LINES.length; line += 1) {
     const [sq1, sq2, sq3] = WINNING_LINES[line];
+    const currentLine = [board[sq1], board[sq2], board[sq3]];
+    const humanSquares = (square) => square === HUMAN_MARKER;
+    const computerSquares = (square) => square === COMPUTER_MARKER;
 
-    if (
-      board[sq1] === HUMAN_MARKER
-      && board[sq2] === HUMAN_MARKER
-      && board[sq3] === HUMAN_MARKER
-    ) {
+    if (currentLine.every(humanSquares)) {
       return 'Player';
-    } if (
-      board[sq1] === COMPUTER_MARKER
-      && board[sq2] === COMPUTER_MARKER
-      && board[sq3] === COMPUTER_MARKER
-    ) {
+    } else if(currentLine.every(computerSquares)) {
       return 'Computer';
     }
   }
-
   return null;
 }
 
