@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-condition */
 /* eslint-disable no-console */
 /* eslint-disable no-param-reassign */
 const readline = require('readline-sync');
@@ -6,6 +7,7 @@ const INITIAL_MARKER = ' ';
 const HUMAN_MARKER = 'X';
 const COMPUTER_MARKER = 'O';
 const GAMES_TO_WIN = 3;
+const MAX_GAMES = 5;
 const CENTER_SQUARE = 5;
 const WHO_PLAYS_FIRST = { choose: ' ' };
 const WINNING_LINES = [
@@ -67,8 +69,8 @@ function displayGameInfo(board, score, round) {
   console.clear();
   displayScore(score, round);
   displayBoard(board);
-
   console.log(`You are ${HUMAN_MARKER}. Computer is ${COMPUTER_MARKER}`);
+  console.log(`Round ${round} of ${MAX_GAMES}`);
 }
 
 function initializeBoard() {
@@ -137,9 +139,7 @@ function computerChoosesSquare(board) {
   let square;
 
   square = computerOffensiveMove(board, square);
-
   if (!square) square = computerDefensiveMove(board, square);
-
   if (!square && board[CENTER_SQUARE] === INITIAL_MARKER) {
     board['5'] = COMPUTER_MARKER;
   } else if (!square && board[CENTER_SQUARE] !== INITIAL_MARKER) {
@@ -195,7 +195,7 @@ function someoneWonRound(board, score, round) {
 function whoPlaysFirst() {
   console.clear();
   prompt('Welcome to Tic-Tac-Toe!');
-  prompt("Let's play a best of 5 games.");
+  prompt(`Let's play a best of ${MAX_GAMES} games.`);
 
   while (true) {
     prompt("Type 'p' to go first, otherwise type 'c' to let the computer go first.");
@@ -224,23 +224,22 @@ function alternatePlayer(currentPlayer) {
 }
 
 // Ask the user if they want to play again
-function playAgain() {
-  let answer = ' ';
-
+function playAgain(answer) {
   while (true) {
     prompt('Play again? (y or n)');
     answer = readline.question().toLowerCase();
-    if (answer === 'y' || answer === 'n') {
-      return answer;
-    }
+    if (answer === 'y' || answer === 'n' || answer === 'yes' || answer === 'no') break;
     prompt('Invalid choice.');
   }
+
+  return answer;
 }
 
 // Game Loop
 while (true) {
   const Score = { Player: 0, Computer: 0 };
   let round = 1;
+  let answer = '';
 
   whoPlaysFirst();
   let currentPlayer = WHO_PLAYS_FIRST.choose;
@@ -257,7 +256,6 @@ while (true) {
     }
 
     displayGameInfo(Board, Score, round);
-
     someoneWonRound(Board, Score, round);
 
     if (Object.values(Score).includes(GAMES_TO_WIN)) {
@@ -272,7 +270,8 @@ while (true) {
     readline.question('\nPress any key to continue playing ');
   }
 
-  if (playAgain() === 'n') break;
+  answer = playAgain(answer);
+  if (answer === 'n' || answer === 'no') break;
 }
 
 prompt('\nThanks for playing Tic-Tac-Toe!');
