@@ -72,12 +72,12 @@ function displayGameInfo(board, score, round) {
 }
 
 function initializeBoard() {
-  const BOARD = {};
+  const Board = {};
   for (let square = 1; square <= 9; square += 1) {
-    BOARD[String(square)] = ' ';
+    Board[String(square)] = ' ';
   }
 
-  return BOARD;
+  return Board;
 }
 
 function joinOr(array, delimiter = ', ', joinWord = 'or') {
@@ -108,32 +108,42 @@ function playerChoosesSquare(board) {
   board[square] = HUMAN_MARKER;
 }
 
-function computerChoosesSquare(board) {
-  let square;
-
-  // offense
+function computerOffensiveMove(board, square) {
   for (let index = 0; index < WINNING_LINES.length; index += 1) {
-    const LINE = WINNING_LINES[index];
-    square = findAtRiskSquare(LINE, board, COMPUTER_MARKER);
+    const Line = WINNING_LINES[index];
+    square = findAtRiskSquare(Line, board, COMPUTER_MARKER);
     if (square) break;
   }
 
-  // defense
-  if (!square) {
-    for (let index = 0; index < WINNING_LINES.length; index += 1) {
-      const LINE = WINNING_LINES[index];
-      square = findAtRiskSquare(LINE, board, HUMAN_MARKER);
-      if (square) break;
-    }
+  return square;
+}
+
+function computerDefensiveMove(board, square) {
+  for (let index = 0; index < WINNING_LINES.length; index += 1) {
+    const Line = WINNING_LINES[index];
+    square = findAtRiskSquare(Line, board, HUMAN_MARKER);
+    if (square) break;
   }
 
+  return square;
+}
+
+function computerRandomMove(board) {
+  const randomIndex = Math.floor(Math.random() * emptySquares(board).length);
+  return emptySquares(board)[randomIndex];
+}
+
+function computerChoosesSquare(board) {
+  let square;
+
+  square = computerOffensiveMove(board, square);
+
+  if (!square) square = computerDefensiveMove(board, square);
+
   if (!square && board[CENTER_SQUARE] === INITIAL_MARKER) {
-    // pick number 5, milord
     board['5'] = COMPUTER_MARKER;
   } else if (!square && board[CENTER_SQUARE] !== INITIAL_MARKER) {
-    // random placement if there are no offensive or defense moves
-    const randomIndex = Math.floor(Math.random() * emptySquares(board).length);
-    square = emptySquares(board)[randomIndex];
+    square = computerRandomMove(board);
   }
 
   board[square] = COMPUTER_MARKER;
@@ -178,6 +188,7 @@ function someoneWonRound(board, score, round) {
     updateScore(detectWinner(board), score);
     return prompt(`${detectWinner(board)} won round ${round}`);
   }
+
   return prompt("It's a tie!");
 }
 
@@ -208,6 +219,7 @@ function chooseSquare(board, currentPlayer) {
 
 function alternatePlayer(currentPlayer) {
   if (currentPlayer === 'p') return 'c';
+
   return 'p';
 }
 
@@ -227,31 +239,30 @@ function playAgain() {
 
 // Game Loop
 while (true) {
-  const SCORE = { Player: 0, Computer: 0 };
+  const Score = { Player: 0, Computer: 0 };
   let round = 1;
 
   whoPlaysFirst();
   let currentPlayer = WHO_PLAYS_FIRST.choose;
 
   while (true) {
-    // Start board
-    const BOARD = initializeBoard();
+    const Board = initializeBoard();
 
     // Game mechanics
     while (true) {
-      displayGameInfo(BOARD, SCORE, round);
-      chooseSquare(BOARD, currentPlayer);
+      displayGameInfo(Board, Score, round);
+      chooseSquare(Board, currentPlayer);
       currentPlayer = alternatePlayer(currentPlayer);
-      if (someoneWon(BOARD) || boardFull(BOARD)) break;
+      if (someoneWon(Board) || boardFull(Board)) break;
     }
 
-    displayGameInfo(BOARD, SCORE, round);
+    displayGameInfo(Board, Score, round);
 
-    someoneWonRound(BOARD, SCORE, round);
+    someoneWonRound(Board, Score, round);
 
-    if (Object.values(SCORE).includes(GAMES_TO_WIN)) {
-      displayGameInfo(BOARD, SCORE, round);
-      prompt(`${detectWinner(BOARD)} wins the game!`);
+    if (Object.values(Score).includes(GAMES_TO_WIN)) {
+      displayGameInfo(Board, Score, round);
+      prompt(`${detectWinner(Board)} wins the game!`);
       break;
     }
 
