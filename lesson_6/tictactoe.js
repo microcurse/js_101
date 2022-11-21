@@ -160,12 +160,10 @@ function detectWinner(board) {
     const humanSquares = (square) => square === HUMAN_MARKER;
     const computerSquares = (square) => square === COMPUTER_MARKER;
 
-    if (currentLine.every(humanSquares)) {
-      return 'Player';
-    } else if(currentLine.every(computerSquares)) {
-      return 'Computer';
-    }
+    if (currentLine.every(humanSquares)) return 'Player';
+    if (currentLine.every(computerSquares)) return 'Computer';
   }
+
   return null;
 }
 
