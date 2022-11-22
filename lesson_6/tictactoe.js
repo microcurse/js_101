@@ -10,6 +10,7 @@ const GAMES_TO_WIN = 3;
 const MAX_GAMES = 5;
 const CENTER_SQUARE = 5;
 const WHO_PLAYS_FIRST = { choose: ' ' };
+const SCORE = { Player: 0, Computer: 0 };
 const WINNING_LINES = [
   [1, 2, 3], [4, 5, 6], [7, 8, 9], // rows
   [1, 4, 7], [2, 5, 8], [3, 6, 9], // columns
@@ -167,6 +168,11 @@ function detectWinner(board) {
   return null;
 }
 
+// This function exists to make sure ties don't increment the round
+function updateRound(board) {
+  return !!detectWinner(board) ? 1 : 0;
+}
+
 function someoneWon(board) {
   return !!detectWinner(board);
 }
@@ -229,7 +235,6 @@ function playAgain(answer) {
 
 // Game Loop
 while (true) {
-  const Score = { Player: 0, Computer: 0 };
   let round = 1;
   let answer = '';
 
@@ -241,23 +246,22 @@ while (true) {
 
     // Game mechanics
     while (true) {
-      displayGameInfo(Board, Score, round);
+      displayGameInfo(Board, SCORE, round);
       chooseSquare(Board, currentPlayer);
       currentPlayer = alternatePlayer(currentPlayer);
       if (someoneWon(Board) || boardFull(Board)) break;
     }
 
-    displayGameInfo(Board, Score, round);
-    someoneWonRound(Board, Score, round);
+    displayGameInfo(Board, SCORE, round);
+    someoneWonRound(Board, SCORE, round);
 
-    if (Object.values(Score).includes(GAMES_TO_WIN)) {
-      displayGameInfo(Board, Score, round);
+    if (Object.values(SCORE).includes(GAMES_TO_WIN)) {
+      displayGameInfo(Board, SCORE, round);
       prompt(`${detectWinner(Board)} wins the game!`);
       break;
     }
 
-    // Increment the round
-    round += 1;
+    round += updateRound(Board);
 
     readline.question('\nPress any key to continue playing ');
   }
