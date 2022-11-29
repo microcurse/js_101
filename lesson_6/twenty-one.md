@@ -25,4 +25,49 @@
 5. Dealer turn: hit or stay
   - repeat until total >= 17
 6. If dealer busts, player wins.
-7 Compare cards and declare winner.
+7. Compare cards and declare winner.
+
+## Tips on Getting Started
+
+### Data Structure
+Using nested arrays. Element at index 0 will be the card's suit, and the element at index 1 will be the card's value.
+
+e.g. 
+['C', 'A'] = Ace of Clubs = C11/C1
+['H', '7'] = 7 of Hearts = H7
+
+### Calculating aces
+Aces will equal 11 as long as the player's hand is less than 21, otherwise the Ace will equal 1.
+
+Algorithm:
+1. Pass in currentHand as an argument to the function
+2. Create an empty variable that gets the total value of the given cards from the currentHand.
+3. Create an empty variable sum that stores the resulting calculations
+4. For each value from the given cards
+  - If value === A
+    - Increment the sum variable by 11
+  - Else if value === K, Q, J
+    - Icremenent the sum variable by 10
+  - else
+    - Increment the sum variable by the number
+5. Check if the sum is greater than 21
+  - If it is, decrement the value of the sum by 10 (Ace should equal 1 instead of 11. Subtracting 10 will allow us to acheive the same thing along with ensuring the proper incrementing of future Aces);
+6. Return the sum
+
+### Player turn
+
+Pseudocode:
+- Ask player to hit or stay
+- If stay, stop asking
+- Otherwise, go to #1
+
+### Suffle Cards
+Use the Fisher-Yates shuffle
+
+### Dealer Turn
+The dealer turn follows a pattern that is very similar to the player's turn. However, the dealer's break condition occurs at the top of the "hit or stay" loop.
+
+Pseudocode:
+- If cards are <= 17
+- Stay and break out of loop
+- Otherwise, go to #1
