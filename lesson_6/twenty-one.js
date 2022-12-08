@@ -12,7 +12,7 @@ function welcomeGreeting() {
 }
 
 function calculateHandTotal(cards) {
-  const values = cards.map(cards[1]);
+  const values = cards.map((card) => card[1]);
 
   let sum = 0;
   values.forEach((value) => {
@@ -50,21 +50,24 @@ function playAgain(answer) {
 }
 
 function busted(cards) {
-  if (calculateHandTotal(cards) > 21) {
-    return 'Looks like you busted!';
-  }
+  if (calculateHandTotal(cards) > 21);
+}
+
+function displayResults() {
 }
 
 function playerTurn(cards) {
+  let answer;
   while (true) {
     prompt('Hit or stay?');
-    // Show player their hand here?
-    let answer = readline.question();
-    if (answer === 'stay' || busted()) break;
+    answer = readline.question();
+    if (answer === 'stay' || busted(cards)) break;
+    cards.push(DECK.shift());
+    prompt(`You now have ${cards} for a total of ${calculateHandTotal(cards)}`);
+    debugger;
   }
 
-  calculateHandTotal(cards);
-  if (busted) {
+  if (busted(cards)) {
     // problably end the game? or ask the user to play again?
     playAgain();
   } else {
@@ -85,13 +88,9 @@ function shuffleDeck(array) {
   return newArray;
 }
 
-// function displayResults() {
+function gameResults() {
 
-// }
-
-// function gameResults() {
-
-// }
+}
 
 function dealerTurn() {
   while (true) {
@@ -103,6 +102,8 @@ function dealerTurn() {
     }
   }
 }
+
+// Need a function that translates the cards.
 
 /* eslint-disable no-unreachable-loop */
 
@@ -116,11 +117,22 @@ while (true) {
 
   playerHand.push(...dealCards(Deck));
   dealerHand.push(...dealCards(Deck));
-  console.log(playerHand);
-  console.log(dealerHand);
+
+  // Show the player their cards and show them one of the dealer's cards
+  prompt(`The dealer is showing a ${dealerHand[0]} and a face-down card`);
+  prompt(`You have ${playerHand[0]} and ${playerHand[1]} for a total of ${calculateHandTotal(playerHand)}`);
+
+  debugger;
+  playerTurn(playerHand);
+
+  // If the player has twenty-one
+  
+
+  // console.log(calculateHandTotal(playerHand));
+  // console.log(...dealerHand);
+  // If either do, then flip both their cards over and show totals.
 
   break;
-debugger;
   // displayGame();
   // playerTurn();
 }
