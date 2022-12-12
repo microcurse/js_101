@@ -25,7 +25,7 @@ function calculateHandTotal(cards) {
     }
   });
 
-  // Find all Aces and check if the sum is greater than 21, reduce it by 10
+  // Find all Aces and check if the sum is greater than 21, reduce its value by 10
   values.filter((value) => value === 'A').forEach(_ => {
     if (sum > 21) sum -= 10;
   });
@@ -37,44 +37,56 @@ function dealCards(cards) {
   return [cards.shift(), cards.shift()];
 }
 
-// Ask the user if they want to play again
 function playAgain(answer) {
+  prompt('------------------');
   while (true) {
-    prompt('Play again? (y or n)');
+    prompt('Play again? (yes or no)');
     answer = readline.question().toLowerCase();
     if (answer === 'y' || answer === 'n' || answer === 'yes' || answer === 'no') break;
-    prompt('Invalid choice.');
+    prompt("Sorry, please type either 'yes' or 'no'");
   }
 
   return answer;
 }
 
 function busted(cards) {
-  if (calculateHandTotal(cards) > 21);
+  return calculateHandTotal(cards) > 21;
 }
 
-function displayResults() {
+function whoWon(playerHand, dealerHand) {
+  const PlayerTotal = calculateHandTotal(playerHand);
+  const DealerTotal = calculateHandTotal(dealerHand);
+
+  if (PlayerTotal > 21) return 'PLAYER_BUSTED';
+  if (DealerTotal > 21) return 'DEALER_BUSTED';
+  if (DealerTotal < PlayerTotal) return 'PLAYER';
+  if (DealerTotal > PlayerTotal) return 'DEALER';
+
+  return 'TIE';
 }
 
-function playerTurn(cards) {
-  let answer;
-  while (true) {
-    prompt('Hit or stay?');
-    answer = readline.question();
-    if (answer === 'stay' || busted(cards)) break;
-    cards.push(DECK.shift());
-    prompt(`You now have ${cards} for a total of ${calculateHandTotal(cards)}`);
-    debugger;
-  }
+function displayResults(playerHand, dealerHand) {
+  const Result = whoWon(playerHand, dealerHand);
 
-  if (busted(cards)) {
-    // problably end the game? or ask the user to play again?
-    playAgain();
-  } else {
-    prompt('You chose to stay!'); // if player didn't bust, must have stayed to get here
+  switch (Result) {
+    case 'PLAYER_BUSTED':
+      prompt('You busted! Dealer wins!');
+      break;
+    case 'DEALER_BUSTED':
+      prompt('Dealer busted! You win!');
+      break;
+    case 'PLAYER':
+      prompt('You win!');
+      break;
+    case 'DEALER':
+      prompt('Dealer wins!');
+      break;
+    case 'TIE':
+      prompt("It's a tie!");
+      break;
+    default:
+      // Nothing here, just appeasing the linter
   }
-
-  // return; // something
 }
 
 function shuffleDeck(array) {
@@ -88,51 +100,80 @@ function shuffleDeck(array) {
   return newArray;
 }
 
-function gameResults() {
-
-}
-
-function dealerTurn() {
-  while (true) {
-    if (cardsValue <= 17) {
-      console.log(cardsValue);
-      break;
-    } else {
-      dealCard();
-    }
-  }
-}
-
-// Need a function that translates the cards.
-
-/* eslint-disable no-unreachable-loop */
-
 // Game loop
 while (true) {
+  let answer;
   welcomeGreeting();
   // Initialize the deck
   const Deck = shuffleDeck(DECK);
-  let playerHand = [];
-  let dealerHand = [];
+  const playerHand = [];
+  const dealerHand = [];
 
   playerHand.push(...dealCards(Deck));
   dealerHand.push(...dealCards(Deck));
 
-  // Show the player their cards and show them one of the dealer's cards
-  prompt(`The dealer is showing a ${dealerHand[0]} and a face-down card`);
+  prompt(`The dealer has ${dealerHand[0]} and a face-down card`);
   prompt(`You have ${playerHand[0]} and ${playerHand[1]} for a total of ${calculateHandTotal(playerHand)}`);
 
-  debugger;
-  playerTurn(playerHand);
+  // Player's turn
+  while (true) {
+    let playerTurn;
+    while (true) {
+      prompt('Hit or stay?');
+      playerTurn = readline.question().toLowerCase();
+      if (['hit', 'h', 'stay', 's'].includes(playerTurn)) break;
+      prompt("Sorry, please enter 'hit' or 'stay'");
+    }
 
-  // If the player has twenty-one
-  
+    if (['hit', 'h'].includes(playerTurn)) {
+      playerHand.push(DECK.shift());
+      prompt('You chose to hit!');
+      prompt(`You now have ${playerHand} for a total of ${calculateHandTotal(playerHand)}`);
+    }
 
-  // console.log(calculateHandTotal(playerHand));
-  // console.log(...dealerHand);
-  // If either do, then flip both their cards over and show totals.
+    if (['stay', 's'].includes(playerTurn) || busted(playerHand)) break;
+  }
 
-  break;
-  // displayGame();
-  // playerTurn();
+  if (busted(playerHand)) {
+    displayResults(playerHand, dealerHand);
+    if (playAgain()) {
+      continue;
+    } else {
+      break;
+    }
+  } else {
+    prompt(`You stayed at ${calculateHandTotal(playerHand)}`);
+  }
+
+  // Dealer's turn
+  prompt(`The dealer reveals their hand ${dealerHand} for a total of ${calculateHandTotal(dealerHand)}`);
+  while (true) {
+    if (calculateHandTotal(dealerHand) >= 17) break;
+    prompt('Dealer hits');
+    dealerHand.push(DECK.shift());
+    prompt(`Dealer has ${dealerHand} for a total of ${calculateHandTotal(dealerHand)}`);
+  }
+
+  if (busted(dealerHand)) {
+    displayResults(playerHand, dealerHand);
+    if (playAgain()) {
+      continue;
+    } else {
+      break;
+    }
+  } else {
+    prompt(`Dealer stays at ${calculateHandTotal(dealerHand)}`);
+  }
+
+  console.log('=====================');
+  prompt(`Dealer has ${dealerHand} for a total of ${calculateHandTotal(dealerHand)}`);
+  prompt(`You have ${playerHand} for a total of ${calculateHandTotal(playerHand)}`);
+  console.log('=====================');
+
+  displayResults(playerHand, dealerHand);
+
+  answer = playAgain(answer);
+  if (answer === 'no' || answer === 'n') break;
 }
+
+prompt('Thanks for playing Twenty-one!');
