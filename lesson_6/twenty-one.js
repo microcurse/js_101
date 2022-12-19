@@ -49,8 +49,8 @@ function playAgain(answer) {
   return answer;
 }
 
-function busted(cards) {
-  return calculateHandTotal(cards) > 21;
+function busted(total) {
+  return total > 21;
 }
 
 function whoWon(playerHand, dealerHand) {
@@ -103,17 +103,21 @@ function shuffleDeck(array) {
 // Game loop
 while (true) {
   let answer;
+
   welcomeGreeting();
   // Initialize the deck
   const Deck = shuffleDeck(DECK);
-  const playerHand = [];
-  const dealerHand = [];
+  let playerHand = [];
+  let dealerHand = [];
 
   playerHand.push(...dealCards(Deck));
   dealerHand.push(...dealCards(Deck));
 
+  let playerTotal = calculateHandTotal(playerHand);
+  let dealerTotal = calculateHandTotal(dealerHand);
+
   prompt(`The dealer has ${dealerHand[0]} and a face-down card`);
-  prompt(`You have ${playerHand[0]} and ${playerHand[1]} for a total of ${calculateHandTotal(playerHand)}`);
+  prompt(`You have ${playerHand[0]} and ${playerHand[1]} for a total of ${playerTotal}`);
 
   // Player's turn
   while (true) {
@@ -127,14 +131,15 @@ while (true) {
 
     if (['hit', 'h'].includes(playerTurn)) {
       playerHand.push(DECK.shift());
+      playerTotal = calculateHandTotal(playerHand);
       prompt('You chose to hit!');
-      prompt(`You now have ${playerHand} for a total of ${calculateHandTotal(playerHand)}`);
+      prompt(`You now have ${playerHand} for a total of ${playerTotal}`);
     }
 
-    if (['stay', 's'].includes(playerTurn) || busted(playerHand)) break;
+    if (['stay', 's'].includes(playerTurn) || busted(playerTotal)) break;
   }
 
-  if (busted(playerHand)) {
+  if (busted(playerTotal)) {
     displayResults(playerHand, dealerHand);
     if (playAgain()) {
       continue;
@@ -142,19 +147,20 @@ while (true) {
       break;
     }
   } else {
-    prompt(`You stayed at ${calculateHandTotal(playerHand)}`);
+    prompt(`You stayed at ${playerTotal}`);
   }
 
   // Dealer's turn
-  prompt(`The dealer reveals their hand ${dealerHand} for a total of ${calculateHandTotal(dealerHand)}`);
+  prompt(`The dealer reveals their hand ${dealerHand} for a total of ${dealerTotal}`);
   while (true) {
-    if (calculateHandTotal(dealerHand) >= 17) break;
+    if (dealerTotal >= 17) break;
     prompt('Dealer hits');
     dealerHand.push(DECK.shift());
-    prompt(`Dealer has ${dealerHand} for a total of ${calculateHandTotal(dealerHand)}`);
+    dealerTotal = calculateHandTotal(dealerHand);
+    prompt(`Dealer has ${dealerHand} for a total of ${dealerTotal}`);
   }
 
-  if (busted(dealerHand)) {
+  if (busted(dealerTotal)) {
     displayResults(playerHand, dealerHand);
     if (playAgain()) {
       continue;
@@ -162,12 +168,12 @@ while (true) {
       break;
     }
   } else {
-    prompt(`Dealer stays at ${calculateHandTotal(dealerHand)}`);
+    prompt(`Dealer stays at ${dealerTotal}`);
   }
 
   console.log('=====================');
-  prompt(`Dealer has ${dealerHand} for a total of ${calculateHandTotal(dealerHand)}`);
-  prompt(`You have ${playerHand} for a total of ${calculateHandTotal(playerHand)}`);
+  prompt(`Dealer has ${dealerHand} for a total of ${dealerTotal}`);
+  prompt(`You have ${playerHand} for a total of ${playerTotal}`);
   console.log('=====================');
 
   displayResults(playerHand, dealerHand);
