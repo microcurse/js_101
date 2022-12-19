@@ -1,7 +1,10 @@
 const readline = require('readline-sync');
+const SUITS = ['Clubs', 'Diamonds', 'Hearts', 'Spades'];
+const VALUES = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace'];
 const DECK = [
   ['H', '2'], ['H', '3'], ['H', '4'], ['H', '5'], ['H', '6'], ['H', '7'], ['H', '8'], ['H', '9'], ['H', '10'], ['H', 'J'], ['H', 'Q'], ['H', 'K'], ['H', 'A'], ['S', '2'], ['S', '3'], ['S', '4'], ['S', '5'], ['S', '6'], ['S', '7'], ['S', '8'], ['S', '9'], ['S', '10'], ['S', 'J'], ['S', 'Q'], ['S', 'K'], ['S', 'A'], ['C', '2'], ['C', '3'], ['C', '4'], ['C', '5'], ['C', '6'], ['C', '7'], ['C', '8'], ['C', '9'], ['C', '10'], ['C', 'J'], ['C', 'Q'], ['C', 'K'], ['C', 'A'], ['D', '2'], ['D', '3'], ['D', '4'], ['D', '5'], ['D', '6'], ['D', '7'], ['D', '8'], ['D', '9'], ['D', '10'], ['D', 'J'], ['D', 'Q'], ['D', 'K'], ['D', 'A'],
 ];
+let round = 0;
 
 function prompt(msg) {
   console.log(`=> ${msg}`);
@@ -100,6 +103,16 @@ function shuffleDeck(array) {
   return newArray;
 }
 
+function roundEnd(total) {
+  // This needs to check if either the player or dealer has busted.
+  // If true, then display the busted text
+  // Display round info
+  // Continue play
+  if (busted(total)) {
+    displayResults(playerTotal, dealerTotal);
+  }
+}
+
 // Game loop
 while (true) {
   let answer;
@@ -138,6 +151,9 @@ while (true) {
 
     if (['stay', 's'].includes(playerTurn) || busted(playerTotal)) break;
   }
+
+  roundEnd(playerTotal);
+  prompt(`You stayed at ${playerTotal}`);
 
   if (busted(playerTotal)) {
     displayResults(playerHand, dealerHand);
@@ -181,5 +197,5 @@ while (true) {
   answer = playAgain(answer);
   if (answer === 'no' || answer === 'n') break;
 }
-
+console.clear();
 prompt('Thanks for playing Twenty-one!');
