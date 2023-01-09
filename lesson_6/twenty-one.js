@@ -10,7 +10,7 @@ const readline = require('readline-sync');
 const SUITS = ['Clubs', 'Diamonds', 'Hearts', 'Spades'];
 const VALUES = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace'];
 const WINNING_NUM = 21;
-const GAMES_TO_WIN = 3;
+const GAMES_TO_WIN = 5;
 
 function prompt(msg) {
   console.log(`=> ${msg}`);
@@ -31,6 +31,16 @@ function readableCards(cards) {
    */
 
 //
+}
+
+function gameRules() {
+  console.log('---------------- RULES ----------------');
+  prompt('Beat the dealer by getting a count as close to 21 as possible, without going over 21!');
+  prompt('If either player goes over 21, that player "busts" and immediately loses.');
+  prompt('When you\'re dealt cards, you can choose to "hit" to draw another card from the deck.');
+  prompt('Or you can choose to "stay" if you\'re confident you can win with those cards!');
+  prompt(`First player to win ${GAMES_TO_WIN} rounds takes the game!`);
+  console.log(' ');
 }
 
 function calculateHandTotal(cards) {
@@ -238,6 +248,7 @@ while (true) {
   const Score = { Player: 0, Dealer: 0 };
   console.clear();
   welcomeGreeting();
+  gameRules();
   const DECK = createDeck(SUITS, VALUES);
   playRound(Score, DECK);
 
