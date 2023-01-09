@@ -1,7 +1,15 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable arrow-parens */
+/* eslint-disable prefer-const */
+/* eslint-disable no-console */
+/* eslint-disable no-constant-condition */
+/* eslint-disable no-param-reassign */
 const readline = require('readline-sync');
-const DECK = [
-  ['H', '2'], ['H', '3'], ['H', '4'], ['H', '5'], ['H', '6'], ['H', '7'], ['H', '8'], ['H', '9'], ['H', '10'], ['H', 'J'], ['H', 'Q'], ['H', 'K'], ['H', 'A'], ['S', '2'], ['S', '3'], ['S', '4'], ['S', '5'], ['S', '6'], ['S', '7'], ['S', '8'], ['S', '9'], ['S', '10'], ['S', 'J'], ['S', 'Q'], ['S', 'K'], ['S', 'A'], ['C', '2'], ['C', '3'], ['C', '4'], ['C', '5'], ['C', '6'], ['C', '7'], ['C', '8'], ['C', '9'], ['C', '10'], ['C', 'J'], ['C', 'Q'], ['C', 'K'], ['C', 'A'], ['D', '2'], ['D', '3'], ['D', '4'], ['D', '5'], ['D', '6'], ['D', '7'], ['D', '8'], ['D', '9'], ['D', '10'], ['D', 'J'], ['D', 'Q'], ['D', 'K'], ['D', 'A'],
-];
+
+const SUITS = ['Clubs', 'Diamonds', 'Hearts', 'Spades'];
+const VALUES = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace'];
+const WINNING_NUM = 21;
+const GAMES_TO_WIN = 3;
 
 function prompt(msg) {
   console.log(`=> ${msg}`);
@@ -12,22 +20,21 @@ function welcomeGreeting() {
 }
 
 function calculateHandTotal(cards) {
-  const values = cards.map((card) => card[1]);
+  const values = cards.map((card) => card[0]);
 
   let sum = 0;
   values.forEach((value) => {
-    if (value === 'A') {
+    if (value === 'Ace') {
       sum += 11;
-    } else if (['K', 'Q', 'J'].includes(value)) {
+    } else if (['King', 'Queen', 'Jack'].includes(value)) {
       sum += 10;
     } else {
       sum += Number(value);
     }
   });
 
-  // Find all Aces and check if the sum is greater than 21, reduce its value by 10
-  values.filter((value) => value === 'A').forEach(_ => {
-    if (sum > 21) sum -= 10;
+  values.filter((value) => value === 'Ace').forEach(_ => {
+    if (sum > WINNING_NUM) sum -= 10;
   });
 
   return sum;
@@ -38,11 +45,10 @@ function dealCards(cards) {
 }
 
 function playAgain(answer) {
-  prompt('------------------');
   while (true) {
     prompt('Play again? (yes or no)');
     answer = readline.question().toLowerCase();
-    if (answer === 'y' || answer === 'n' || answer === 'yes' || answer === 'no') break;
+    if (['no', 'n', 'yes', 'y'].includes(answer)) break;
     prompt("Sorry, please type either 'yes' or 'no'");
   }
 
@@ -50,17 +56,14 @@ function playAgain(answer) {
 }
 
 function busted(total) {
-  return total > 21;
+  return total > WINNING_NUM;
 }
 
-function whoWon(playerHand, dealerHand) {
-  const PlayerTotal = calculateHandTotal(playerHand);
-  const DealerTotal = calculateHandTotal(dealerHand);
-
-  if (PlayerTotal > 21) return 'PLAYER_BUSTED';
-  if (DealerTotal > 21) return 'DEALER_BUSTED';
-  if (DealerTotal < PlayerTotal) return 'PLAYER';
-  if (DealerTotal > PlayerTotal) return 'DEALER';
+function whoWon(playerTotal, dealerTotal) {
+  if (playerTotal > WINNING_NUM) return 'PLAYER_BUSTED';
+  if (dealerTotal > WINNING_NUM) return 'DEALER_BUSTED';
+  if (dealerTotal < playerTotal) return 'PLAYER';
+  if (dealerTotal > playerTotal) return 'DEALER';
 
   return 'TIE';
 }
@@ -89,6 +92,32 @@ function displayResults(playerHand, dealerHand) {
   }
 }
 
+function updateScore(score, playerTotal, dealerTotal) {
+  const Winner = whoWon(playerTotal, dealerTotal);
+
+  if (Winner === 'PLAYER' || Winner === 'DEALER_BUSTED') {
+    score.Player += 1;
+  } else if (Winner === 'DEALER' || Winner === 'PLAYER_BUSTED') {
+    score.Dealer += 1;
+  }
+}
+
+function displayScore(score, round) {
+  console.log(`--------------- Round ${round} ---------------`);
+  console.log(`  Player score: ${score.Player}   Dealer score: ${score.Dealer}  `);
+  console.log('---------------------------------------');
+}
+
+function createDeck(suits, values) {
+  let deck = [];
+
+  suits.map((suit) => {
+    values.forEach(value => deck.push([value, suit]));
+  });
+
+  return deck;
+}
+
 function shuffleDeck(array) {
   const newArray = array;
 
@@ -100,86 +129,105 @@ function shuffleDeck(array) {
   return newArray;
 }
 
-// Game loop
-while (true) {
-  let answer;
-
-  welcomeGreeting();
-  // Initialize the deck
-  const Deck = shuffleDeck(DECK);
-  let playerHand = [];
-  let dealerHand = [];
-
-  playerHand.push(...dealCards(Deck));
-  dealerHand.push(...dealCards(Deck));
-
-  let playerTotal = calculateHandTotal(playerHand);
-  let dealerTotal = calculateHandTotal(dealerHand);
-
-  prompt(`The dealer has ${dealerHand[0]} and a face-down card`);
-  prompt(`You have ${playerHand[0]} and ${playerHand[1]} for a total of ${playerTotal}`);
-
-  // Player's turn
+function playerTurn(playerHand, playerTotal, deck) {
   while (true) {
-    let playerTurn;
+    let response;
     while (true) {
       prompt('Hit or stay?');
-      playerTurn = readline.question().toLowerCase();
-      if (['hit', 'h', 'stay', 's'].includes(playerTurn)) break;
+      response = readline.question().toLowerCase();
+      if (['hit', 'h', 'stay', 's'].includes(response)) break;
       prompt("Sorry, please enter 'hit' or 'stay'");
     }
 
-    if (['hit', 'h'].includes(playerTurn)) {
-      playerHand.push(DECK.shift());
+    if (['hit', 'h'].includes(response)) {
+      playerHand.push(deck.shift());
       playerTotal = calculateHandTotal(playerHand);
       prompt('You chose to hit!');
       prompt(`You now have ${playerHand} for a total of ${playerTotal}`);
     }
 
-    if (['stay', 's'].includes(playerTurn) || busted(playerTotal)) break;
+    if (['stay', 's'].includes(response) || busted(playerTotal)) break;
   }
 
-  if (busted(playerTotal)) {
-    displayResults(playerHand, dealerHand);
-    if (playAgain()) {
-      continue;
-    } else {
-      break;
-    }
-  } else {
-    prompt(`You stayed at ${playerTotal}`);
-  }
+  return playerTotal;
+}
 
-  // Dealer's turn
-  prompt(`The dealer reveals their hand ${dealerHand} for a total of ${dealerTotal}`);
+function dealerTurn(dealerHand, dealerTotal, deck) {
   while (true) {
     if (dealerTotal >= 17) break;
     prompt('Dealer hits');
-    dealerHand.push(DECK.shift());
+    dealerHand.push(deck.shift());
     dealerTotal = calculateHandTotal(dealerHand);
     prompt(`Dealer has ${dealerHand} for a total of ${dealerTotal}`);
   }
 
-  if (busted(dealerTotal)) {
-    displayResults(playerHand, dealerHand);
-    if (playAgain()) {
-      continue;
-    } else {
-      break;
+  return dealerTotal;
+}
+
+// Round loop
+function playRound(score, deck) {
+  let round = 1;
+
+  while (score.Player < GAMES_TO_WIN && score.Dealer < GAMES_TO_WIN) {
+    let shuffledDeck = shuffleDeck(deck);
+    let playerHand = [];
+    let dealerHand = [];
+    playerHand.push(...dealCards(shuffledDeck));
+    dealerHand.push(...dealCards(shuffledDeck));
+    let playerTotal = calculateHandTotal(playerHand);
+    let dealerTotal = calculateHandTotal(dealerHand);
+    let roundOver = false;
+    displayScore(score, round);
+
+    while (!roundOver) {
+      prompt(`The dealer has ${dealerHand[0]} and a face-down card`);
+      prompt(`You have ${playerHand[0]} and ${playerHand[1]} for a total of ${playerTotal}`);
+
+      playerTotal = playerTurn(playerHand, playerTotal, shuffledDeck);
+
+      if (busted(playerTotal)) {
+        displayResults(playerTotal, dealerTotal);
+        break;
+      } else {
+        prompt(`You stayed at ${playerTotal}`);
+      }
+
+      prompt(`The dealer reveals their hand ${dealerHand} for a total of ${dealerTotal}`);
+      dealerTotal = dealerTurn(dealerHand, dealerTotal, shuffledDeck);
+
+      if (busted(dealerTotal)) {
+        displayResults(playerTotal, dealerTotal);
+        break;
+      } else {
+        prompt(`Dealer stays at ${dealerTotal}`);
+      }
+
+      console.log('-'.repeat(32));
+      prompt(`Dealer has ${dealerHand} for a total of ${dealerTotal}`);
+      prompt(`You have ${playerHand} for a total of ${playerTotal}`);
+      console.log('-'.repeat(32));
+
+      displayResults(playerTotal, dealerTotal);
+      roundOver = true;
+      round += 1;
     }
-  } else {
-    prompt(`Dealer stays at ${dealerTotal}`);
+
+    updateScore(score, playerTotal, dealerTotal);
+    readline.question('\nPress any key to continue playing ');
+    console.clear();
   }
+}
 
-  console.log('=====================');
-  prompt(`Dealer has ${dealerHand} for a total of ${dealerTotal}`);
-  prompt(`You have ${playerHand} for a total of ${playerTotal}`);
-  console.log('=====================');
-
-  displayResults(playerHand, dealerHand);
+// Game loop
+while (true) {
+  let answer;
+  const Score = { Player: 0, Dealer: 0 };
+  console.clear();
+  welcomeGreeting();
+  const DECK = createDeck(SUITS, VALUES);
+  playRound(Score, DECK);
 
   answer = playAgain(answer);
   if (answer === 'no' || answer === 'n') break;
 }
-
 prompt('Thanks for playing Twenty-one!');
