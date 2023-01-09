@@ -20,6 +20,15 @@ function welcomeGreeting() {
   prompt('Welcome to Twenty-One!');
 }
 
+function gameRules() {
+  console.log('---------------- RULES ----------------');
+  prompt('Beat the dealer by getting a count as close to 21 as possible, without going over 21!');
+  prompt('If either player goes over 21, that player "busts" and immediately loses.');
+  prompt('When you\'re dealt cards, you can choose to "hit" to draw another card from the deck.');
+  prompt('Or you can choose to "stay" if you\'re confident you can win with those cards!');
+  console.log(' ');
+}
+
 function calculateHandTotal(cards) {
   const values = cards.map((card) => card[0]);
 
@@ -225,6 +234,7 @@ while (true) {
   const Score = { Player: 0, Dealer: 0 };
   console.clear();
   welcomeGreeting();
+  gameRules();
   const DECK = createDeck(SUITS, VALUES);
   playRound(Score, DECK);
 
