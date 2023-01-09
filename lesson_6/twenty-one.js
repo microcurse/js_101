@@ -20,6 +20,19 @@ function welcomeGreeting() {
   prompt('Welcome to Twenty-One!');
 }
 
+function readableCards(cards) {
+  /**
+   * When cards are passed here they are converted into a more readable format
+   *
+   * Replace commas with "of" and keep commas between each card
+   * "King of Spades, 2 of Hearts, and Ace of Diamonds".
+   * Insert "and" between the last 2 elements.
+   * Return value is "King of Spades" or "2 of Hearts"
+   */
+
+//
+}
+
 function calculateHandTotal(cards) {
   const values = cards.map((card) => card[0]);
 
