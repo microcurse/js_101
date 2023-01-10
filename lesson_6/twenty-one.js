@@ -175,6 +175,13 @@ function dealerTurn(dealerHand, dealerTotal, deck) {
   return dealerTotal;
 }
 
+function endOfRound(playerHand, dealerHand, playerTotal, dealerTotal) {
+  console.log('-'.repeat(32));
+  prompt(`Dealer has ${dealerHand} for a total of ${dealerTotal}`);
+  prompt(`You have ${playerHand} for a total of ${playerTotal}`);
+  console.log('-'.repeat(32));
+}
+
 // Round loop
 function playRound(score, deck) {
   let round = 1;
@@ -197,7 +204,7 @@ function playRound(score, deck) {
       playerTotal = playerTurn(playerHand, playerTotal, shuffledDeck);
 
       if (busted(playerTotal)) {
-        displayResults(playerTotal, dealerTotal);
+        endOfRound(playerHand, dealerHand, playerTotal, dealerTotal);
         break;
       } else {
         prompt(`You stayed at ${playerTotal}`);
@@ -207,22 +214,18 @@ function playRound(score, deck) {
       dealerTotal = dealerTurn(dealerHand, dealerTotal, shuffledDeck);
 
       if (busted(dealerTotal)) {
-        displayResults(playerTotal, dealerTotal);
+        endOfRound(playerHand, dealerHand, playerTotal, dealerTotal);
         break;
       } else {
         prompt(`Dealer stays at ${dealerTotal}`);
       }
 
-      console.log('-'.repeat(32));
-      prompt(`Dealer has ${dealerHand} for a total of ${dealerTotal}`);
-      prompt(`You have ${playerHand} for a total of ${playerTotal}`);
-      console.log('-'.repeat(32));
-
-      displayResults(playerTotal, dealerTotal);
+      endOfRound(playerHand, dealerHand, playerTotal, dealerTotal);
       roundOver = true;
       round += 1;
     }
 
+    displayResults(playerTotal, dealerTotal);
     updateScore(score, playerTotal, dealerTotal);
     readline.question('\nPress any key to continue playing ');
     console.clear();
