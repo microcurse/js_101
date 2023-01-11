@@ -155,6 +155,7 @@ function playerTurn(playerHand, playerTotal, deck) {
       playerTotal = calculateHandTotal(playerHand);
       prompt('You chose to hit!');
       prompt(`You now have ${playerHand} for a total of ${playerTotal}`);
+      console.log(` `);
     }
 
     if (['stay', 's'].includes(response) || busted(playerTotal)) break;
@@ -172,6 +173,7 @@ function dealerTurn(dealerHand, dealerTotal, deck) {
     prompt(`Dealer has ${dealerHand} for a total of ${dealerTotal}`);
   }
 
+  console.log(` `);
   return dealerTotal;
 }
 
@@ -201,6 +203,8 @@ function playRound(score, deck) {
       prompt(`The dealer has ${dealerHand[0]} and a face-down card`);
       prompt(`You have ${playerHand[0]} and ${playerHand[1]} for a total of ${playerTotal}`);
 
+      console.log(` `);
+      prompt(`PLAYER'S TURN`);
       playerTotal = playerTurn(playerHand, playerTotal, shuffledDeck);
 
       if (busted(playerTotal)) {
@@ -210,6 +214,8 @@ function playRound(score, deck) {
         prompt(`You stayed at ${playerTotal}`);
       }
 
+      console.log(` `);
+      prompt(`DEALER'S TURN`);
       prompt(`The dealer reveals their hand ${dealerHand} for a total of ${dealerTotal}`);
       dealerTotal = dealerTurn(dealerHand, dealerTotal, shuffledDeck);
 
