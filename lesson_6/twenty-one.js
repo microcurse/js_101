@@ -130,7 +130,7 @@ function createDeck(suits, values) {
 }
 
 function shuffleDeck(array) {
-  const newArray = array;
+  const newArray = [...array];
 
   for (let index = newArray.length - 1; index > 0; index -= 1) {
     const otherIndex = Math.floor(Math.random() * (index + 1)); // 0 to index
