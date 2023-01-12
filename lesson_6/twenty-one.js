@@ -1,10 +1,3 @@
-/* eslint-disable array-callback-return */
-/* eslint-disable no-unused-vars */
-/* eslint-disable arrow-parens */
-/* eslint-disable prefer-const */
-/* eslint-disable no-console */
-/* eslint-disable no-constant-condition */
-/* eslint-disable no-param-reassign */
 const readline = require('readline-sync');
 
 const SUITS = ['Clubs', 'Diamonds', 'Hearts', 'Spades'];
@@ -20,17 +13,14 @@ function welcomeGreeting() {
   prompt('Welcome to Twenty-One!');
 }
 
-function readableCards(cards) {
-  /**
-   * When cards are passed here they are converted into a more readable format
-   *
-   * Replace commas with "of" and keep commas between each card
-   * "King of Spades, 2 of Hearts, and Ace of Diamonds".
-   * Insert "and" between the last 2 elements.
-   * Return value is "King of Spades" or "2 of Hearts"
-   */
+function printCard(cards) {
+  // guard clause to print dealer's single shown card;
+  const newArray = [...cards];
+  if (typeof newArray[0] === 'string') {
+    return newArray.join(' of ');
+  }
 
-//
+  return newArray.map((card) => card.join(' of ')).join(', ');
 }
 
 function gameRules() {
@@ -167,7 +157,7 @@ function playerTurn(playerHand, playerTotal, deck) {
       playerHand.push(deck.shift());
       playerTotal = calculateHandTotal(playerHand);
       prompt('You chose to hit!');
-      prompt(`You now have ${playerHand} for a total of ${playerTotal}`);
+      prompt(`You now have [${printCard(playerHand)}] for a total of ${playerTotal}`);
       console.log(` `);
     }
 
@@ -183,7 +173,7 @@ function dealerTurn(dealerHand, dealerTotal, deck) {
     prompt('Dealer hits');
     dealerHand.push(deck.shift());
     dealerTotal = calculateHandTotal(dealerHand);
-    prompt(`Dealer has ${dealerHand} for a total of ${dealerTotal}`);
+    prompt(`Dealer has [${printCard(dealerHand)}] for a total of ${dealerTotal}`);
   }
 
   console.log(` `);
@@ -192,8 +182,8 @@ function dealerTurn(dealerHand, dealerTotal, deck) {
 
 function endOfRound(playerHand, dealerHand, playerTotal, dealerTotal) {
   console.log('-'.repeat(32));
-  prompt(`Dealer has ${dealerHand} for a total of ${dealerTotal}`);
-  prompt(`You have ${playerHand} for a total of ${playerTotal}`);
+  prompt(`Dealer has [${printCard(dealerHand)}] for a total of ${dealerTotal}`);
+  prompt(`You have [${printCard(playerHand)}] for a total of ${playerTotal}`);
   console.log('-'.repeat(32));
 }
 
@@ -213,8 +203,8 @@ function playRound(score, deck) {
     displayScore(score, round);
 
     while (!roundOver) {
-      prompt(`The dealer has ${dealerHand[0]} and a face-down card`);
-      prompt(`You have ${playerHand[0]} and ${playerHand[1]} for a total of ${playerTotal}`);
+      prompt(`The dealer has [${printCard(dealerHand[0])}, face-down card]`);
+      prompt(`You have [${printCard(playerHand)}] for a total of ${playerTotal}`);
 
       console.log(` `);
       prompt(`PLAYER'S TURN`);
@@ -229,7 +219,7 @@ function playRound(score, deck) {
 
       console.log(` `);
       prompt(`DEALER'S TURN`);
-      prompt(`The dealer reveals their hand ${dealerHand} for a total of ${dealerTotal}`);
+      prompt(`The dealer reveals their hand [${printCard(dealerHand)}] for a total of ${dealerTotal}`);
       dealerTotal = dealerTurn(dealerHand, dealerTotal, shuffledDeck);
 
       if (busted(dealerTotal)) {
