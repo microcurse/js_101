@@ -117,7 +117,7 @@ function updateScore(score, playerTotal, dealerTotal) {
 }
 
 function displayScore(score, round) {
-  console.log(`--------------- Round ${round} ---------------`);
+  console.log(`--------------- Round ${round.roundNum} ---------------`);
   console.log(`  Player score: ${score.Player}   Dealer score: ${score.Dealer}  `);
   console.log('---------------------------------------');
 }
@@ -125,8 +125,8 @@ function displayScore(score, round) {
 function createDeck(suits, values) {
   let deck = [];
 
-  suits.map((suit) => {
-    values.forEach(value => deck.push([value, suit]));
+  suits.forEach((suit) => {
+    values.forEach((value) => deck.push([value, suit]));
   });
 
   return deck;
@@ -180,16 +180,17 @@ function dealerTurn(dealerHand, dealerTotal, deck) {
   return dealerTotal;
 }
 
-function endOfRound(playerHand, dealerHand, playerTotal, dealerTotal) {
+function endOfRound(playerHand, dealerHand, playerTotal, dealerTotal, round) {
   console.log('-'.repeat(32));
   prompt(`Dealer has [${printCard(dealerHand)}] for a total of ${dealerTotal}`);
   prompt(`You have [${printCard(playerHand)}] for a total of ${playerTotal}`);
   console.log('-'.repeat(32));
+  round.roundNum += 1;
 }
 
 // Round loop
 function playRound(score, deck) {
-  let round = 1;
+  let round = { roundOver: false, roundNum: 1 };
 
   while (score.Player < GAMES_TO_WIN && score.Dealer < GAMES_TO_WIN) {
     let shuffledDeck = shuffleDeck(deck);
@@ -199,10 +200,10 @@ function playRound(score, deck) {
     dealerHand.push(...dealCards(shuffledDeck));
     let playerTotal = calculateHandTotal(playerHand);
     let dealerTotal = calculateHandTotal(dealerHand);
-    let roundOver = false;
     displayScore(score, round);
+    round.roundOver = false;
 
-    while (!roundOver) {
+    while (!round.roundOver) {
       prompt(`The dealer has [${printCard(dealerHand[0])}, face-down card]`);
       prompt(`You have [${printCard(playerHand)}] for a total of ${playerTotal}`);
 
@@ -211,7 +212,7 @@ function playRound(score, deck) {
       playerTotal = playerTurn(playerHand, playerTotal, shuffledDeck);
 
       if (busted(playerTotal)) {
-        endOfRound(playerHand, dealerHand, playerTotal, dealerTotal);
+        endOfRound(playerHand, dealerHand, playerTotal, dealerTotal, round);
         break;
       } else {
         prompt(`You stayed at ${playerTotal}`);
@@ -223,15 +224,14 @@ function playRound(score, deck) {
       dealerTotal = dealerTurn(dealerHand, dealerTotal, shuffledDeck);
 
       if (busted(dealerTotal)) {
-        endOfRound(playerHand, dealerHand, playerTotal, dealerTotal);
+        endOfRound(playerHand, dealerHand, playerTotal, dealerTotal, round);
         break;
       } else {
         prompt(`Dealer stays at ${dealerTotal}`);
       }
 
-      endOfRound(playerHand, dealerHand, playerTotal, dealerTotal);
-      roundOver = true;
-      round += 1;
+      endOfRound(playerHand, dealerHand, playerTotal, dealerTotal, round);
+      round.roundOver = true;
     }
 
     displayResults(playerTotal, dealerTotal);
