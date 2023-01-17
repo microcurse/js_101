@@ -142,7 +142,6 @@ function shuffleDeck(array) {
   return newArray;
 }
 
-// eslint-disable-next-line max-lines-per-function, max-statements
 function playerTurn(player, deck) {
   while (true) {
     let response;
