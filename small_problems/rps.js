@@ -24,7 +24,7 @@ const VALID_CHOICES = {
   l: 'lizard',
   v: 'spock'
 }
-const WIN_CONDITIONS = {
+const PLAYER_WIN_CONDITIONS = {
   rock:     ['scissors', 'lizard'],
   scissors: ['lizard', 'paper'],
   paper:    ['rock', 'spock'],
@@ -69,25 +69,37 @@ function isShortened(choice) {
 }
 
 function didPlayerWin(playerChoice, computerChoice) {
-  return WIN_CONDITIONS[isShortened(playerChoice)].includes(computerChoice);
+  return PLAYER_WIN_CONDITIONS[isShortened(playerChoice)].includes(computerChoice);
 }
 
 function determineRoundWinner(player, computer) {
-  prompt(`You chose ${isShortened(player.choice)}. Computer chose ${computer.choice}`);
-
   if (didPlayerWin(player.choice, computer.choice)) {
-    prompt(`You won the match!`);
-    updateScore(player);
+    return 'Player';
   } else if (isShortened(player.choice) === computer.choice) {
-    prompt("It's a tie!");
+    return 'Tie';
   } else {
-    prompt('Computer won the match!');
-    updateScore(computer);
+    return 'Computer'
   }
 }
 
-function updateScore(matchWinner) {
-  matchWinner.score += 1;
+function displayChoices(player, computer) {
+  prompt(`You chose ${isShortened(player.choice)}. Computer chose ${computer.choice}`);
+}
+
+function displayRoundWinner(roundWinner) {
+  if (roundWinner === 'Tie') {
+    prompt(`It's a tie!`);
+  } else {
+    prompt(`${roundWinner} wins the match!`);
+  }
+}
+
+function updateScore(player, computer, roundWinner) {
+  if (roundWinner === 'Player') {
+    player.score += 1;
+  } else if (roundWinner === 'Computer') {
+    computer.score += 1;
+  }
 }
 
 function displayScore(playerScore, computerScore) {
@@ -102,12 +114,6 @@ function determineGameWinner(playerScore, computerScore) {
   }
 }
 
-function clearScore(player, computer) {
-  player.score = 0;
-  computer.score = 0;
-  console.clear();
-}
-
 function playAgain() {
   prompt("Would you like to play again? (y/n)");
 
@@ -120,7 +126,6 @@ function playAgain() {
   }
 
   if (answer[0] === 'y' || answer === 'yes') {
-    clearScore();
     playGame();
   } else {
     prompt(`Thanks for playing! Goodbye!`);
@@ -136,14 +141,18 @@ function playGame() {
     score: 0,
     choice: ''
   }
-  clearScore(Player, Computer);
+  console.clear();
   welcomeAndRules();
 
   while (Player.score < WINNING_SCORE && Computer.score < WINNING_SCORE) {
     Player.choice = playersTurn();
     Computer.choice = computersTurn();
-    
-    determineRoundWinner(Player, Computer);
+
+    let currentRoundWinner = determineRoundWinner(Player, Computer)
+
+    displayChoices(Player, Computer);
+    displayRoundWinner(currentRoundWinner);
+    updateScore(Player, Computer, currentRoundWinner);
     displayScore(Player.score, Computer.score);
     determineGameWinner(Player.score, Computer.score);
   }
