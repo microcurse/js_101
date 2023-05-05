@@ -72,18 +72,18 @@ function didPlayerWin(playerChoice, computerChoice) {
   return PLAYER_WIN_CONDITIONS[isShortened(playerChoice)].includes(computerChoice);
 }
 
-function determineRoundWinner(player, computer) {
-  if (didPlayerWin(player.choice, computer.choice)) {
+function determineRoundWinner(playerChoice, computerChoice) {
+  if (didPlayerWin(playerChoice, computerChoice)) {
     return 'Player';
-  } else if (isShortened(player.choice) === computer.choice) {
+  } else if (isShortened(playerChoice) === computerChoice) {
     return 'Tie';
   } else {
     return 'Computer'
   }
 }
 
-function displayChoices(player, computer) {
-  prompt(`You chose ${isShortened(player.choice)}. Computer chose ${computer.choice}`);
+function displayChoices(playerChoice, computerChoice) {
+  prompt(`You chose ${isShortened(playerChoice)}. Computer chose ${computerChoice}`);
 }
 
 function displayRoundWinner(roundWinner) {
@@ -148,9 +148,9 @@ function playGame() {
     Player.choice = playersTurn();
     Computer.choice = computersTurn();
 
-    let currentRoundWinner = determineRoundWinner(Player, Computer)
+    let currentRoundWinner = determineRoundWinner(Player.choice, Computer.choice)
 
-    displayChoices(Player, Computer);
+    displayChoices(Player.choice, Computer.choice);
     displayRoundWinner(currentRoundWinner);
     updateScore(Player, Computer, currentRoundWinner);
     displayScore(Player.score, Computer.score);
