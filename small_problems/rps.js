@@ -102,9 +102,9 @@ function determineGameWinner(playerScore, computerScore) {
   }
 }
 
-function clearScore(playerScore, computerScore) {
-  playerScore = 0;
-  computerScore = 0;
+function clearScore(player, computer) {
+  player.score = 0;
+  computer.score = 0;
   console.clear();
 }
 
@@ -136,7 +136,7 @@ function playGame() {
     score: 0,
     choice: ''
   }
-  clearScore(Player.score, Computer.score);
+  clearScore(Player, Computer);
   welcomeAndRules();
 
   while (Player.score < WINNING_SCORE && Computer.score < WINNING_SCORE) {
