@@ -8,7 +8,7 @@
  * 
  * 
  * RPS Bonus Features
- * 1. Lizard Spck
+ * 1. Lizard Spock
  * 2. Shortened Input
  * 3. Best of 5
  * 4. ESLint Complaints
@@ -35,12 +35,6 @@ const CHOICE_KEYS = Object.keys(VALID_CHOICES);
 const CHOICE_VALUES = Object.values(VALID_CHOICES);
 const WINNING_SCORE = 3;
 
-let choice = '';
-let computerChoice = '';
-let playerScore = 0;
-let computerScore = 0;
-let keepPlaying = true;
-
 function prompt(msg) {
   console.log(`=> ${msg}`);
 }
@@ -52,17 +46,19 @@ function welcomeAndRules() {
 
 function playersTurn() {
   prompt(`Choose one: ${CHOICE_VALUES.join(', ')} (${CHOICE_KEYS.join(', ')} respectively.)`);
-  choice = readline.question().toLowerCase();
+  let playerInput = readline.question().toLowerCase();
   
-  while(!CHOICE_VALUES.includes(choice) && !CHOICE_KEYS.includes(choice)) {
+  while(!CHOICE_VALUES.includes(playerInput) && !CHOICE_KEYS.includes(playerInput)) {
     prompt("That's not a valid choice.");
-    choice = readline.question().toLowerCase();
+    playerInput = readline.question().toLowerCase();
   }
+
+  return playerInput;
 }
 
 function computersTurn() {
   let randomIndex = Math.floor(Math.random() * CHOICE_VALUES.length);
-  computerChoice = CHOICE_VALUES[randomIndex];
+  return CHOICE_VALUES[randomIndex];
 }
 
 function isShortened(choice) {
@@ -72,62 +68,58 @@ function isShortened(choice) {
   return choice;
 }
 
-function playerWins(choice, computerChoice) {
-  return WIN_CONDITIONS[isShortened(choice)].includes(computerChoice);
+function didPlayerWin(playerChoice, computerChoice) {
+  return WIN_CONDITIONS[isShortened(playerChoice)].includes(computerChoice);
 }
 
-function displayMatchWinner(choice, computerChoice) {
-  prompt(`You chose ${isShortened(choice)}. Computer chose ${computerChoice}`);
-  
-  if (playerWins(choice, computerChoice)) {
+function determineRoundWinner(player, computer) {
+  prompt(`You chose ${isShortened(player.choice)}. Computer chose ${computer.choice}`);
+
+  if (didPlayerWin(player.choice, computer.choice)) {
     prompt(`You won the match!`);
-    addScore('player');
-  } else if (isShortened(choice) === computerChoice) {
+    updateScore(player);
+  } else if (isShortened(player.choice) === computer.choice) {
     prompt("It's a tie!");
   } else {
     prompt('Computer won the match!');
-    addScore('computer');
+    updateScore(computer);
   }
 }
 
-function addScore(matchWinner) {
-  if (matchWinner === 'player') {
-    playerScore += 1;
-  } else if (matchWinner === 'computer') {
-    computerScore += 1;
-  }
+function updateScore(matchWinner) {
+  matchWinner.score += 1;
 }
 
-function displayScore() {
+function displayScore(playerScore, computerScore) {
   prompt(`Player Score: ${playerScore}\n Computer Score: ${computerScore}`);
 }
 
-function chooseGameWinner(playerScore, computerScore) {
+function determineGameWinner(playerScore, computerScore) {
   if (playerScore === WINNING_SCORE) {
     prompt(`You won the game!`);
-    keepPlaying = false;
   } else if (computerScore === WINNING_SCORE) {
     prompt(`Computer won the game!`);
-    keepPlaying = false;
   }
 }
 
-function clearScore() {
+function clearScore(playerScore, computerScore) {
   playerScore = 0;
   computerScore = 0;
   console.clear();
 }
 
-function askToPlayAgain() {
+function playAgain() {
   prompt("Would you like to play again? (y/n)");
+
+  let validAnswers = ['yes', 'y', 'no', 'n'];
   let answer = readline.question().toLowerCase();
-  while (answer !== 'yes' && answer !== 'no' && answer !== 'y' && answer !== 'n') {
+
+  while (!validAnswers.includes(answer)) {
     prompt("Please enter 'yes'(y) or 'no'(n)");
     answer = readline.question().toLowerCase();
   }
 
   if (answer[0] === 'y' || answer === 'yes') {
-    keepPlaying = true;
     clearScore();
     playGame();
   } else {
@@ -136,20 +128,27 @@ function askToPlayAgain() {
 }
 
 function playGame() {
-  console.clear();
+  const Player = {
+    score: 0,
+    choice: ''
+  }
+  const Computer = {
+    score: 0,
+    choice: ''
+  }
+  clearScore(Player.score, Computer.score);
   welcomeAndRules();
 
-  while (keepPlaying) {
-    playersTurn();
-    computersTurn();
-    displayMatchWinner(choice, computerChoice);
-    displayScore();
-    chooseGameWinner(playerScore, computerScore);
-  
-    if (!keepPlaying) {
-      askToPlayAgain();
-    }
+  while (Player.score < WINNING_SCORE && Computer.score < WINNING_SCORE) {
+    Player.choice = playersTurn();
+    Computer.choice = computersTurn();
+    
+    determineRoundWinner(Player, Computer);
+    displayScore(Player.score, Computer.score);
+    determineGameWinner(Player.score, Computer.score);
   }
+
+  playAgain();
 }
 
 playGame();
